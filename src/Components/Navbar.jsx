@@ -7,9 +7,11 @@ const Navbar = () => {
       
       <div className="flex gap-6 text-gray-500 text-5xl">
         <i className="ri-bus-line"></i>
+        
       </div>
+      <p className='text-4xl mr-100'>Green Bus</p>
 
-      <div className='hidden md:flex items-center gap-7 pl-100 text-lg'>
+      <div className='hidden md:flex items-center gap-7 pr-30 text-lg'>
         <a href="#" className="hover:text-green-600">
           Home
         </a>

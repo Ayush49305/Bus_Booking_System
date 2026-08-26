@@ -33,10 +33,8 @@ const SearchBox = () => {
     
     <div className="absolute z-10 top-1/2 left-[1%] -translate-y-1/2 w-[80%] max-w-xl border border-gray-500 p-5 rounded-lg">
 
-      {/* From and To */}
       <div className="grid grid-cols-2 gap-4">
 
-        {/* From */}
         <div>
           <label className="block text-sm text-gray-500 mb-2">
             From
@@ -50,8 +48,6 @@ const SearchBox = () => {
           </select>
         </div>
 
-
-        {/* To */}
         <div>
           <label className="block text-sm text-gray-500 mb-2">
             To
@@ -67,8 +63,6 @@ const SearchBox = () => {
 
       </div>
 
-
-      {/* Date */}
       <div className="mt-5">
 
         <label className="block text-sm text-gray-500 mb-2">
@@ -82,8 +76,6 @@ const SearchBox = () => {
 
       </div>
 
-
-      {/* Button */}
       <button className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white py-3 rounded-md font-semibold">
         SEARCH BUSES
       </button>
