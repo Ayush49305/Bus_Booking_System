@@ -12,8 +12,10 @@ const Footer = () => {
               alt='bus logo'
               className='w-40 h-auto'  
             />
+            <p>Book bus tickets effortlessly with ViserBus! Enjoy seamless travel planning. Whether it’s a daily commute or a long-distance trip, we’re here to make your journey smooth.</p>
             
           </div>
+          
           
           
         </div>
