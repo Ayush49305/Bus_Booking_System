@@ -16,7 +16,7 @@ const Footer = () => {
             <img
               src={busLogo}
               alt="Bus logo"
-              className="w-40 h-auto mb-6"
+              className="w-40 h-auto mb-2"
             />
 
             <p className="text-gray-300 leading-7 mb-6">
