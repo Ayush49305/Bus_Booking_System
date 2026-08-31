@@ -6,17 +6,16 @@ const Footer = () => {
   return (
     <footer className="bg-[#1e2a40] text-white">
       
-      {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-14">
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
 
-          {/* Column 1 */}
+          
           <div>
             <img
               src={busLogo}
               alt="Bus logo"
-              className="w-40 h-auto mb-2"
+              className="w-40 h-auto mb-1"
             />
 
             <p className="text-gray-300 leading-7 mb-6">
@@ -26,7 +25,6 @@ const Footer = () => {
               smooth.
             </p>
 
-            {/* Social Icons */}
             <div className="flex gap-3">
 
               <a
@@ -60,8 +58,6 @@ const Footer = () => {
             </div>
           </div>
 
-
-          {/* Column 2 - Useful Links */}
           <div>
             <h2 className="text-3xl font-bold text-green-500 mb-2">
               Useful Links
@@ -102,8 +98,6 @@ const Footer = () => {
             </ul>
           </div>
 
-
-          {/* Column 3 - Policies */}
           <div>
             <h2 className="text-3xl font-bold text-green-500 mb-2">
               Policies
@@ -145,7 +139,6 @@ const Footer = () => {
           </div>
 
 
-          {/* Column 4 - Contact */}
           <div>
             <h2 className="text-3xl font-bold text-green-500 mb-2">
               Contact Info
@@ -158,20 +151,20 @@ const Footer = () => {
               <div className="flex gap-3">
                 <i className="ri-map-pin-line text-green-500 text-xl"></i>
                 <p>
-                  House #45, Bengla Road Suite,
+                  Street #45,NSB Road,
                   <br />
-                  Banani, DOHS, Dhaka
+                  City Center,Duragapur
                 </p>
               </div>
 
               <div className="flex gap-3">
                 <i className="ri-phone-line text-green-500 text-xl"></i>
-                <p>+44 45678908</p>
+                <p>+91 4567890823</p>
               </div>
 
               <div className="flex gap-3">
                 <i className="ri-mail-line text-green-500 text-xl"></i>
-                <p>example@gmail.com</p>
+                <p>greenbus00@gmail.com</p>
               </div>
 
             </div>
@@ -181,7 +174,6 @@ const Footer = () => {
       </div>
 
 
-      {/* Bottom Footer */}
       <div className="border-t border-gray-600">
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-5 flex flex-col md:flex-row justify-between items-center gap-4">
 

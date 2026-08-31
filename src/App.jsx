@@ -1,18 +1,21 @@
-import React from 'react'
-import Navbar from './Components/Navbar'
-import Hero from './Components/Hero'
-import Footer from './Components/Footer'
+import { Routes,Route } from 'react-router-dom'
+import SearchResults from './Pages/SearchResult'
+import Home from './Pages/Home'
 
 
 const App = () => {
   return (
     
-     <>
-      <Navbar/>
-      <Hero/>
-      <Footer/>
-      
-     </>
+    <Routes>
+
+      <Route path="/" element={<Home />} />
+
+      <Route
+        path="/search-results"
+        element={<SearchResults />}
+      />
+
+    </Routes>
     
   )
 }

@@ -6,8 +6,7 @@ const Navbar = () => {
   return (
     <nav className="h-25 flex items-center justify-between px-6 md:px-12 bg-white shadow-sm relative z-20">
 
-      {/* LEFT SIDE - Logo + Name */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
 
         <img
           src={busLogo}
@@ -15,14 +14,12 @@ const Navbar = () => {
           className="w-23 h-23 object-contain shrink-0"
         />
 
-        <span className="text-2xl md:text-3xl text-green-600 font-semibold">
+        <span className="text-4xl md:text-4xl text-green-600 font-semibold">
           Green Bus
         </span>
 
       </div>
 
-
-      {/* MIDDLE - Navigation */}
       <div className="hidden md:flex items-center gap-7 text-lg">
 
         <a href="#" className="hover:text-green-600">
@@ -48,7 +45,6 @@ const Navbar = () => {
       </div>
 
 
-      {/* RIGHT SIDE */}
       <div className="hidden lg:flex items-center gap-5">
 
         <select className="bg-transparent outline-none">

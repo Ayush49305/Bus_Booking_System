@@ -1,34 +1,10 @@
-// import React from 'react'
-
-// const SearchBar = () => {
-//   return (
-//     <div className='realtive bg-white rounded-lg p-7'>
-//         <div className='grid grid-cols-2 gap-4'>
-
-//             <div>
-//                 <label className='block text-sm text-gray-500 mb-2'>
-//                     From
-//                 </label>
-
-//                 <select className="">
-//                     <option>Delhi</option>
-//                     <option>Mumbai</option>
-//                     <option>Kolkata</option>
-//                     <option>Banglore</option>
-//                 </select>
-//             </div>
-
-//         </div>
-      
-//     </div>
-//   )
-// }
-
-// export default SearchBar
-
-import React from "react";
+import React, { useState } from "react";
 
 const SearchBox = () => {
+
+  const[from,setfrom]=useState("")
+  const[to,setTo]=useState("")
+  const[date,setDate]=useState("")
   return (
     
     <div className="absolute z-10 top-1/2 left-[1%] -translate-y-1/2 w-[80%] max-w-xl border border-gray-500 p-5 rounded-lg">
