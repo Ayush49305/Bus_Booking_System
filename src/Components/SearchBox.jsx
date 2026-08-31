@@ -1,10 +1,16 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SearchBox = () => {
 
   const[from,setfrom]=useState("")
   const[to,setTo]=useState("")
   const[date,setDate]=useState("")
+  const navigate = useNavigate()
+  
+  const handleSearch=()=>{
+    navigate("/search-results")
+  }
   return (
     
     <div className="absolute z-10 top-1/2 left-[1%] -translate-y-1/2 w-[80%] max-w-xl border border-gray-500 p-5 rounded-lg">
@@ -52,7 +58,9 @@ const SearchBox = () => {
 
       </div>
 
-      <button className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white py-3 rounded-md font-semibold">
+      <button 
+        onClick={handleSearch}
+        className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white py-3 rounded-md font-semibold">
         SEARCH BUSES
       </button>
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const BusCard = ({
   name,
@@ -9,6 +10,7 @@ const BusCard = ({
   price,
   seats,
 }) => {
+  const navigate=useNavigate()
   return (
     <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
 
@@ -95,7 +97,9 @@ const BusCard = ({
           {seats} Seats Available
         </p>
 
-        <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md font-medium transition">
+        <button 
+          onClick={()=>navigate("/seat-selection")}
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md font-medium transition">
           View Seats
         </button>
 
