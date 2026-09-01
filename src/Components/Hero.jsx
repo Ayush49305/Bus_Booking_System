@@ -1,21 +1,32 @@
-import React from 'react'
-
-import SearchBox from './SearchBox'
+import React from "react";
+import SearchBox from "./SearchBox";
 
 const Hero = () => {
   return (
-    <div className="relative w-full h-[calc(100vh-106px)] overflow-hidden">
-        <h1>Choose Your Ticket</h1>
-      <img 
-      className="absolute inset-0 w-full h-full object-cover"
-      src="https://static.abhibus.com/images/herosection/operators/tgsrtcmobile.webp"/>
+    <section
+      className="relative min-h-[720px] bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage:
+          "url('https://static.abhibus.com/images/herosection/operators/tgsrtcmobile.webp')",
+      }}
+    >
+      {/* Light overlay */}
+      <div className="absolute inset-0 bg-white/10"></div>
 
-      <div className='absolute z-10 top-1/2 left-[8%] w-[42%] -translate-y-1/2'>
-        <h2 className='mb-99 ml-1 text-5xl'>Book Your Ticket</h2>
-        <SearchBox/>
+      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 lg:px-12 pt-20">
+        
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-normal text-black mt-10 -ml-3">
+          Book Your Ticket
+        </h1>
+
+        {/* Search Box */}
+        <div className="mt-8 w-full max-w-[600px] -ml-4">
+          <SearchBox />
+        </div>
+
       </div>
-    </div>
-  )
-}
+    </section>
+  );
+};
 
-export default Hero
+export default Hero;

@@ -1,21 +1,47 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import FilterSidebar from "../Components/FilterSidebar";
 import BusCard from "../Components/BusCard";
 
+import { buses } from "../data/buses";
+
 const SearchResults = () => {
+  const location = useLocation();
+
+  // Get search data from Home page
+  const {
+    from = "",
+    to = "",
+    date = "",
+  } = location.state || {};
+
+  // Filter buses according to search
+  const filteredBuses = buses.filter((bus) => {
+    return (
+      bus.from.toLowerCase() === from.toLowerCase() &&
+      bus.to.toLowerCase() === to.toLowerCase()
+    );
+  });
+
+  // Format date
+  const formattedDate = date
+    ? new Date(date).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "";
+
   return (
     <div className="min-h-screen bg-gray-100">
-
       <Navbar />
 
       {/* Search Header */}
       <section className="bg-green-700 text-white py-8">
-
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
             <div>
@@ -24,7 +50,7 @@ const SearchResults = () => {
               </p>
 
               <h1 className="text-3xl font-bold mt-1">
-                Delhi → Jaipur
+                {from} → {to}
               </h1>
             </div>
 
@@ -34,30 +60,23 @@ const SearchResults = () => {
               </p>
 
               <p className="font-semibold">
-                10 September 2026
+                {formattedDate}
               </p>
             </div>
 
           </div>
-
         </div>
-
       </section>
-
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-10">
-
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
 
-          {/* Filter */}
           <FilterSidebar />
 
-
-          {/* Bus Results */}
+          {/* Results */}
           <div>
-
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
 
               <div>
                 <h2 className="text-2xl font-bold text-gray-800">
@@ -65,7 +84,7 @@ const SearchResults = () => {
                 </h2>
 
                 <p className="text-gray-500 text-sm mt-1">
-                  12 buses found for your route
+                  {filteredBuses.length} buses found for your route
                 </p>
               </div>
 
@@ -73,65 +92,43 @@ const SearchResults = () => {
                 <option>Sort by Price</option>
                 <option>Lowest Price</option>
                 <option>Highest Price</option>
-                <option>Departure Time</option>
               </select>
 
             </div>
 
-
-            {/* Bus Cards */}
+            {/* Bus Results */}
             <div className="space-y-5">
 
-              <BusCard
-                name="Green Bus Travels"
-                type="AC Sleeper"
-                departure="10:00 PM"
-                arrival="06:00 AM"
-                duration="8h"
-                price="850"
-                seats="12"
-              />
+              {filteredBuses.length > 0 ? (
+                filteredBuses.map((bus) => (
+                  <BusCard
+                    key={bus.id}
+                    bus={bus}
+                  />
+                ))
+              ) : (
+                <div className="bg-white rounded-xl shadow-md p-10 text-center">
+                  <div className="text-5xl mb-4">
+                    🚌
+                  </div>
 
-              <BusCard
-                name="Royal Express"
-                type="AC Seater"
-                departure="09:30 PM"
-                arrival="05:30 AM"
-                duration="8h"
-                price="750"
-                seats="8"
-              />
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    No Buses Found
+                  </h2>
 
-              <BusCard
-                name="National Travels"
-                type="Non-AC Sleeper"
-                departure="11:00 PM"
-                arrival="07:30 AM"
-                duration="8h 30m"
-                price="650"
-                seats="15"
-              />
-
-              <BusCard
-                name="City Express"
-                type="AC Sleeper"
-                departure="08:00 PM"
-                arrival="04:00 AM"
-                duration="8h"
-                price="900"
-                seats="6"
-              />
+                  <p className="text-gray-500 mt-2">
+                    Sorry, no buses are available from {from} to {to}.
+                  </p>
+                </div>
+              )}
 
             </div>
-
           </div>
 
         </div>
-
       </main>
 
       <Footer />
-
     </div>
   );
 };
