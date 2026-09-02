@@ -1,183 +1,293 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import Navbar from "../Components/Navbar";
-import Footer from "../Components/Footer";
-import PassengerForm from "../Components/PassengerForm";
-import BookingSummary from "../Components/BookingSummary";
-
 const PassengerDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Get data from Seat Selection page
   const {
     bus,
     selectedSeats = [],
-    totalPrice = 0,
-    pricePerSeat = 850,
+    totalAmount = 0,
   } = location.state || {};
 
-  // Create passenger data for every selected seat
-  const [passengers, setPassengers] = useState(() =>
-    selectedSeats.reduce((acc, seat) => {
-      acc[seat] = {
-        name: "",
-        age: "",
-        gender: "",
-      };
-      return acc;
-    }, {})
+  // Create passenger for every selected seat
+  const [passengers, setPassengers] = useState(
+    selectedSeats.map((seat) => ({
+      seat,
+      name: "",
+      age: "",
+      gender: "",
+      phone: "",
+      email: "",
+    }))
   );
 
+  const handleChange = (index, field, value) => {
+    const updatedPassengers = [...passengers];
 
-  // Update passenger details
-  const handlePassengerChange = (seat, field, value) => {
-    setPassengers((prev) => ({
-      ...prev,
-      [seat]: {
-        ...prev[seat],
-        [field]: value,
-      },
-    }));
+    updatedPassengers[index] = {
+      ...updatedPassengers[index],
+      [field]: value,
+    };
+
+    setPassengers(updatedPassengers);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  // Validate and continue
-  const handleContinue = () => {
-    if (selectedSeats.length === 0) {
-      alert("No seats selected!");
-      navigate("/seat-selection");
-      return;
+    // Check every passenger
+    for (const passenger of passengers) {
+      if (
+        !passenger.name ||
+        !passenger.age ||
+        !passenger.gender ||
+        !passenger.phone ||
+        !passenger.email
+      ) {
+        alert(`Please fill all details for Seat ${passenger.seat}`);
+        return;
+      }
     }
 
-    const allPassengersFilled = selectedSeats.every(
-      (seat) =>
-        passengers[seat]?.name &&
-        passengers[seat]?.age &&
-        passengers[seat]?.gender
-    );
-
-    if (!allPassengersFilled) {
-      alert("Please fill details for all passengers.");
-      return;
-    }
-
-    // Next page will be payment page
+    // IMPORTANT:
+    // Send totalAmount as totalPrice
     navigate("/payment", {
       state: {
         bus,
         selectedSeats,
         passengers,
-        totalPrice,
-        pricePerSeat,
+        totalPrice: totalAmount,
       },
     });
   };
 
+  if (!bus || selectedSeats.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold">
+            Booking information not found
+          </h2>
+
+          <button
+            onClick={() => navigate("/search-results")}
+            className="mt-5 bg-green-600 text-white px-6 py-3 rounded-lg"
+          >
+            Back to Search
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
 
-      <Navbar />
-
-
-      {/* Header */}
-      <section className="bg-green-700 text-white py-8">
-
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-
-          <p className="text-green-100 text-sm">
-            Complete your booking
-          </p>
-
-          <h1 className="text-3xl md:text-4xl font-bold mt-2">
+      {/* HEADER */}
+      <div className="bg-green-700 text-white">
+        <div className="max-w-7xl mx-auto px-6 py-7">
+          <p className="text-sm">
             Passenger Details
-          </h1>
-
-          <p className="mt-2 text-green-100">
-            Please enter details for each passenger
           </p>
 
+          <h1 className="text-3xl font-bold">
+            Enter Passenger Information
+          </h1>
         </div>
+      </div>
 
-      </section>
+      <div className="max-w-6xl mx-auto px-6 py-10">
 
+        <form onSubmit={handleSubmit}>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 md:px-8 py-10">
+          {/* PASSENGERS */}
+          <div className="space-y-8">
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
+            {passengers.map((passenger, index) => (
+              <div
+                key={passenger.seat}
+                className="bg-white rounded-xl shadow-md p-8"
+              >
 
+                <div className="flex justify-between items-center mb-6">
 
-          {/* Left Side */}
-          <div>
+                  <h2 className="text-xl font-bold text-[#1e2a40]">
+                    Passenger {index + 1}
+                  </h2>
 
-            <h2 className="text-xl font-bold text-gray-800 mb-5">
-              Passenger Information
-            </h2>
+                  <span className="bg-green-100 text-green-700 px-4 py-2 rounded-lg font-semibold">
+                    Seat {passenger.seat}
+                  </span>
 
-
-            <div className="space-y-5">
-
-              {selectedSeats.length > 0 ? (
-
-                selectedSeats.map((seat) => (
-                  <PassengerForm
-                    key={seat}
-                    seatNumber={seat}
-                    passenger={passengers[seat]}
-                    onChange={handlePassengerChange}
-                  />
-                ))
-
-              ) : (
-
-                <div className="bg-white p-6 rounded-xl shadow">
-                  <p className="text-gray-500">
-                    No seats selected. Please select seats first.
-                  </p>
-
-                  <button
-                    onClick={() => navigate("/seat-selection")}
-                    className="mt-4 bg-green-600 text-white px-5 py-2 rounded-lg"
-                  >
-                    Go to Seat Selection
-                  </button>
                 </div>
 
-              )}
+                {/* NAME */}
+                <div className="mb-5">
+                  <label className="block text-gray-700 mb-2">
+                    Full Name
+                  </label>
 
-            </div>
+                  <input
+                    type="text"
+                    value={passenger.name}
+                    onChange={(e) =>
+                      handleChange(index, "name", e.target.value)
+                    }
+                    placeholder="Enter full name"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
+                  />
+                </div>
 
+                {/* AGE + GENDER */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-            {/* Continue Button */}
-            {selectedSeats.length > 0 && (
-              <button
-                onClick={handleContinue}
-                className="mt-8 w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-lg font-semibold transition"
-              >
-                CONTINUE TO PAYMENT
-              </button>
-            )}
+                  <div>
+                    <label className="block text-gray-700 mb-2">
+                      Age
+                    </label>
+
+                    <input
+                      type="number"
+                      value={passenger.age}
+                      onChange={(e) =>
+                        handleChange(index, "age", e.target.value)
+                      }
+                      placeholder="Enter age"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-700 mb-2">
+                      Gender
+                    </label>
+
+                    <select
+                      value={passenger.gender}
+                      onChange={(e) =>
+                        handleChange(index, "gender", e.target.value)
+                      }
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
+                    >
+                      <option value="">
+                        Select Gender
+                      </option>
+
+                      <option value="Male">
+                        Male
+                      </option>
+
+                      <option value="Female">
+                        Female
+                      </option>
+
+                      <option value="Other">
+                        Other
+                      </option>
+                    </select>
+                  </div>
+
+                </div>
+
+                {/* PHONE */}
+                <div className="mt-5">
+                  <label className="block text-gray-700 mb-2">
+                    Phone Number
+                  </label>
+
+                  <input
+                    type="tel"
+                    value={passenger.phone}
+                    onChange={(e) =>
+                      handleChange(index, "phone", e.target.value)
+                    }
+                    placeholder="Enter phone number"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
+                  />
+                </div>
+
+                {/* EMAIL */}
+                <div className="mt-5">
+                  <label className="block text-gray-700 mb-2">
+                    Email Address
+                  </label>
+
+                  <input
+                    type="email"
+                    value={passenger.email}
+                    onChange={(e) =>
+                      handleChange(index, "email", e.target.value)
+                    }
+                    placeholder="Enter email address"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
+                  />
+                </div>
+
+              </div>
+            ))}
 
           </div>
 
+          {/* SUMMARY */}
+          <div className="bg-white rounded-xl shadow-md p-6 mt-8">
 
-          {/* Right Side */}
-          <BookingSummary
-            bus={bus}
-            selectedSeats={selectedSeats}
-            totalPrice={totalPrice}
-            pricePerSeat={pricePerSeat}
-          />
+            <h2 className="text-xl font-bold text-[#1e2a40]">
+              Booking Summary
+            </h2>
 
-        </div>
+            <div className="border-b border-gray-300 my-5"></div>
 
-      </main>
+            <p className="text-gray-500 text-sm">
+              Bus
+            </p>
 
+            <p className="font-semibold mb-4">
+              {bus.name}
+            </p>
 
-      <Footer />
+            <p className="text-gray-500 text-sm">
+              Selected Seats
+            </p>
+
+            <p className="font-semibold mb-4">
+              {selectedSeats.join(", ")}
+            </p>
+
+            <p className="text-gray-500 text-sm">
+              Total Amount
+            </p>
+
+            <p className="text-2xl font-bold text-green-600">
+              ₹{totalAmount}
+            </p>
+
+          </div>
+
+          {/* BUTTONS */}
+          <div className="flex gap-4 mt-8">
+
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="flex-1 border border-gray-300 bg-white py-3 rounded-lg font-semibold"
+            >
+              Back
+            </button>
+
+            <button
+              type="submit"
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold"
+            >
+              Continue to Payment
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
 
     </div>
   );

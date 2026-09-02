@@ -13,88 +13,90 @@ const BusCard = ({ bus }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-xl shadow-md p-6 mb-6">
 
-      {/* Top Section */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      {/* TOP SECTION */}
+      <div className="flex justify-between items-start">
 
         <div>
-          <h2 className="text-xl font-bold text-gray-800">
+          <h2 className="text-xl font-bold text-[#1e2a40]">
             {bus.name}
           </h2>
 
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-gray-500 mt-1">
             {bus.type}
           </p>
         </div>
 
-        <div className="text-left md:text-right">
+        <div className="text-right">
           <p className="text-2xl font-bold text-green-600">
             ₹{bus.price}
           </p>
 
-          <p className="text-sm text-gray-500">
+          <p className="text-gray-500 text-sm">
             Per Seat
           </p>
         </div>
 
       </div>
 
-      <hr className="my-5" />
+      <div className="border-b border-gray-300 mt-5"></div>
 
-      {/* Timing */}
-      <div className="grid grid-cols-3 items-center text-center">
+      {/* TIME SECTION */}
+      <div className="flex items-center justify-between py-6">
 
-        <div>
-          <p className="text-lg font-semibold text-gray-800">
+        <div className="text-center">
+          <p className="font-semibold text-lg text-[#1e2a40]">
             {bus.departure}
           </p>
 
-          <p className="text-sm text-gray-500">
+          <p className="text-gray-500 text-sm">
             Departure
           </p>
         </div>
 
-        <div>
-          <p className="text-sm text-gray-500">
-            {bus.duration}
-          </p>
+        <div className="flex items-center gap-3">
 
-          <div className="flex items-center justify-center gap-2 mt-1">
-            <div className="h-[1px] w-8 bg-gray-300"></div>
+          <div className="w-10 border-t border-gray-300"></div>
 
-            <span className="text-green-600">
+          <div className="text-center">
+            <p className="text-gray-500 text-sm">
+              {bus.duration}
+            </p>
+
+            <span className="text-lg">
               🚌
             </span>
-
-            <div className="h-[1px] w-8 bg-gray-300"></div>
           </div>
+
+          <div className="w-10 border-t border-gray-300"></div>
+
         </div>
 
-        <div>
-          <p className="text-lg font-semibold text-gray-800">
+        <div className="text-center">
+          <p className="font-semibold text-lg text-[#1e2a40]">
             {bus.arrival}
           </p>
 
-          <p className="text-sm text-gray-500">
+          <p className="text-gray-500 text-sm">
             Arrival
           </p>
         </div>
 
       </div>
 
-      <hr className="my-5" />
+      <div className="border-b border-gray-300"></div>
 
-      {/* Bottom */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* BOTTOM SECTION */}
+      <div className="flex justify-between items-center pt-5">
 
-        <p className="text-sm text-green-600 font-medium">
-          {bus.seatsAvailable} Seats Available
+        <p className="text-green-600 font-semibold">
+          {bus.seats} Seats Available
         </p>
 
         <button
           onClick={handleViewSeats}
-          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md font-medium transition"
+          className="bg-green-600 hover:bg-green-700 text-white font-semibold px-7 py-3 rounded-lg transition"
         >
           View Seats
         </button>

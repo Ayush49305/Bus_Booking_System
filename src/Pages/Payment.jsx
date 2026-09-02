@@ -13,26 +13,24 @@ const Payment = () => {
   const {
     bus,
     selectedSeats = [],
-    passengers = {},
+    passengers = [],
     totalPrice = 0,
-    pricePerSeat = 850,
   } = location.state || {};
 
   const handlePayment = (paymentMethod) => {
-    if (selectedSeats.length === 0) {
+
+    if (!bus || selectedSeats.length === 0) {
       alert("No booking information found!");
       navigate("/");
       return;
     }
 
-    // Dummy payment - next step
     navigate("/booking-confirmation", {
       state: {
         bus,
         selectedSeats,
         passengers,
         totalPrice,
-        pricePerSeat,
         paymentMethod,
       },
     });
@@ -43,7 +41,7 @@ const Payment = () => {
 
       <Navbar />
 
-      {/* Header */}
+      {/* HEADER */}
       <section className="bg-green-700 text-white py-8">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
 
@@ -62,18 +60,18 @@ const Payment = () => {
         </div>
       </section>
 
-      {/* Main Content */}
+      {/* MAIN */}
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-10">
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
 
-          {/* Payment Section */}
+          {/* PAYMENT */}
           <PaymentMethod
             totalPrice={totalPrice}
             onPayment={handlePayment}
           />
 
-          {/* Booking Summary */}
+          {/* SUMMARY */}
           <PaymentSummary
             bus={bus}
             selectedSeats={selectedSeats}
