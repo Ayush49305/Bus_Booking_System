@@ -13,7 +13,7 @@ const BookingConfirmation = () => {
     bus,
     selectedSeats = [],
     passengers = [],
-    totalAmount = 0,
+    totalPrice = 0,
     paymentMethod = "",
   } = location.state || {};
 
@@ -33,7 +33,7 @@ const BookingConfirmation = () => {
         <div className="bg-white rounded-xl shadow-lg p-6 md:p-10">
 
 
-          {/* SUCCESS MESSAGE */}
+          {/* SUCCESS */}
           <div className="text-center border-b pb-8">
 
             <div className="w-20 h-20 mx-auto bg-green-100 text-green-600 rounded-full flex items-center justify-center text-4xl">
@@ -65,7 +65,7 @@ const BookingConfirmation = () => {
           </div>
 
 
-          {/* JOURNEY DETAILS */}
+          {/* JOURNEY */}
           <div className="py-6 border-b">
 
             <h2 className="text-xl font-bold mb-5">
@@ -82,7 +82,7 @@ const BookingConfirmation = () => {
                 </p>
 
                 <p className="font-semibold">
-                  {bus?.name}
+                  {bus?.name || "-"}
                 </p>
 
               </div>
@@ -95,7 +95,8 @@ const BookingConfirmation = () => {
                 </p>
 
                 <p className="font-semibold">
-                  {bus?.from || "Delhi"} → {bus?.to || "Jaipur"}
+                  {bus?.from || "Delhi"} →{" "}
+                  {bus?.to || bus?.arrival || "Jaipur"}
                 </p>
 
               </div>
@@ -108,7 +109,7 @@ const BookingConfirmation = () => {
                 </p>
 
                 <p className="font-semibold">
-                  {bus?.departure}
+                  {bus?.departure || "-"}
                 </p>
 
               </div>
@@ -131,7 +132,7 @@ const BookingConfirmation = () => {
           </div>
 
 
-          {/* PASSENGER DETAILS */}
+          {/* PASSENGERS */}
           <div className="py-6 border-b">
 
             <h2 className="text-xl font-bold mb-5">
@@ -144,7 +145,8 @@ const BookingConfirmation = () => {
               {selectedSeats.map((seat) => {
 
                 const passenger = passengers.find(
-                  (item) => item.seat === seat
+                  (item) =>
+                    Number(item.seat) === Number(seat)
                 );
 
                 return (
@@ -183,7 +185,7 @@ const BookingConfirmation = () => {
           </div>
 
 
-          {/* PAYMENT DETAILS */}
+          {/* PAYMENT */}
           <div className="py-6">
 
             <h2 className="text-xl font-bold mb-5">
@@ -198,7 +200,7 @@ const BookingConfirmation = () => {
               </span>
 
               <span className="font-semibold uppercase">
-                {paymentMethod}
+                {paymentMethod || "-"}
               </span>
 
             </div>
@@ -211,7 +213,7 @@ const BookingConfirmation = () => {
               </span>
 
               <span className="text-green-600">
-                ₹{totalAmount}
+                ₹{totalPrice}
               </span>
 
             </div>

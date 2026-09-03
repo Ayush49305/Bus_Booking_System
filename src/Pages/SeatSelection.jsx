@@ -10,7 +10,6 @@ const SeatSelection = () => {
 
   const [selectedSeats, setSelectedSeats] = useState([]);
 
-  // If user directly opens the page
   if (!bus) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -38,7 +37,6 @@ const SeatSelection = () => {
     );
   }
 
-  // Seat numbers
   const seats = [
     1, 2, 3, 4,
     5, 6, 7, 8,
@@ -50,12 +48,10 @@ const SeatSelection = () => {
     29, 30, 31, 32,
   ];
 
-  // Some seats are already booked
   const bookedSeats = [3, 7, 12, 18, 25, 30];
 
   const handleSeatClick = (seatNumber) => {
 
-    // Don't allow booked seats
     if (bookedSeats.includes(seatNumber)) {
       return;
     }
@@ -63,9 +59,7 @@ const SeatSelection = () => {
     if (selectedSeats.includes(seatNumber)) {
 
       setSelectedSeats(
-        selectedSeats.filter(
-          (seat) => seat !== seatNumber
-        )
+        selectedSeats.filter((seat) => seat !== seatNumber)
       );
 
     } else {
@@ -78,8 +72,10 @@ const SeatSelection = () => {
     }
   };
 
-  const totalAmount =
-    selectedSeats.length * bus.price;
+  // IMPORTANT
+  // We use totalPrice everywhere in the project
+  const totalPrice =
+    selectedSeats.length * Number(bus.price);
 
   const handleContinue = () => {
 
@@ -90,9 +86,9 @@ const SeatSelection = () => {
 
     navigate("/passenger-details", {
       state: {
-        bus: bus,
-        selectedSeats: selectedSeats,
-        totalAmount: totalAmount,
+        bus,
+        selectedSeats,
+        totalPrice,
       },
     });
   };
@@ -114,7 +110,7 @@ const SeatSelection = () => {
           </h1>
 
           <p className="mt-1">
-            {bus.departure} → {bus.arrival}
+            {bus.from || "Delhi"} → {bus.to || bus.arrival || "Jaipur"}
           </p>
 
         </div>
@@ -122,12 +118,12 @@ const SeatSelection = () => {
       </div>
 
 
-      {/* MAIN CONTENT */}
+      {/* MAIN */}
       <div className="max-w-7xl mx-auto px-6 py-10">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          {/* SEAT AREA */}
+          {/* SEATS */}
           <div className="lg:col-span-2">
 
             <div className="bg-white rounded-xl shadow-md p-8">
@@ -136,8 +132,6 @@ const SeatSelection = () => {
                 Select Your Seats
               </h2>
 
-
-              {/* BUS */}
               <div className="max-w-md mx-auto border-2 border-gray-300 rounded-2xl p-6">
 
                 {/* DRIVER */}
@@ -148,7 +142,6 @@ const SeatSelection = () => {
                   </div>
 
                 </div>
-
 
                 {/* SEATS */}
                 <div className="grid grid-cols-4 gap-4">
@@ -165,12 +158,9 @@ const SeatSelection = () => {
                       <button
                         key={seat}
                         disabled={isBooked}
-                        onClick={() =>
-                          handleSeatClick(seat)
-                        }
+                        onClick={() => handleSeatClick(seat)}
                         className={`
                           h-12 rounded-lg border-2 font-semibold transition
-
                           ${
                             isBooked
                               ? "bg-gray-300 border-gray-300 text-gray-500 cursor-not-allowed"
@@ -195,35 +185,24 @@ const SeatSelection = () => {
               <div className="flex justify-center gap-8 mt-8">
 
                 <div className="flex items-center gap-2">
-
                   <div className="w-5 h-5 border-2 border-green-600 rounded"></div>
-
                   <span className="text-sm text-gray-600">
                     Available
                   </span>
-
                 </div>
 
-
                 <div className="flex items-center gap-2">
-
                   <div className="w-5 h-5 bg-green-600 rounded"></div>
-
                   <span className="text-sm text-gray-600">
                     Selected
                   </span>
-
                 </div>
 
-
                 <div className="flex items-center gap-2">
-
                   <div className="w-5 h-5 bg-gray-300 rounded"></div>
-
                   <span className="text-sm text-gray-600">
                     Booked
                   </span>
-
                 </div>
 
               </div>
@@ -233,7 +212,7 @@ const SeatSelection = () => {
           </div>
 
 
-          {/* BOOKING SUMMARY */}
+          {/* SUMMARY */}
           <div>
 
             <div className="bg-white rounded-xl shadow-md p-6 sticky top-5">
@@ -243,7 +222,6 @@ const SeatSelection = () => {
               </h2>
 
               <div className="border-b border-gray-300 my-5"></div>
-
 
               <div className="space-y-4">
 
@@ -264,7 +242,7 @@ const SeatSelection = () => {
                   </p>
 
                   <p className="font-semibold">
-                    {bus.from || "Delhi"} → {bus.to || "Jaipur"}
+                    {bus.from || "Delhi"} → {bus.to || bus.arrival || "Jaipur"}
                   </p>
                 </div>
 
@@ -275,13 +253,10 @@ const SeatSelection = () => {
                   </p>
 
                   <p className="font-semibold">
-
                     {selectedSeats.length > 0
                       ? selectedSeats.join(", ")
                       : "No seats selected"}
-
                   </p>
-
                 </div>
 
 
@@ -308,7 +283,7 @@ const SeatSelection = () => {
                 </span>
 
                 <span className="text-xl font-bold text-green-600">
-                  ₹{totalAmount}
+                  ₹{totalPrice}
                 </span>
 
               </div>

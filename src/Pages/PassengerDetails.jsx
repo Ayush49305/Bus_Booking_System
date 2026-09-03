@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const PassengerDetails = () => {
+
   const location = useLocation();
   const navigate = useNavigate();
 
   const {
     bus,
     selectedSeats = [],
-    totalAmount = 0,
+    totalPrice = 0,
   } = location.state || {};
 
-  // Create passenger for every selected seat
   const [passengers, setPassengers] = useState(
     selectedSeats.map((seat) => ({
       seat,
@@ -24,6 +24,7 @@ const PassengerDetails = () => {
   );
 
   const handleChange = (index, field, value) => {
+
     const updatedPassengers = [...passengers];
 
     updatedPassengers[index] = {
@@ -35,38 +36,45 @@ const PassengerDetails = () => {
   };
 
   const handleSubmit = (e) => {
+
     e.preventDefault();
 
-    // Check every passenger
     for (const passenger of passengers) {
+
       if (
-        !passenger.name ||
+        !passenger.name.trim() ||
         !passenger.age ||
         !passenger.gender ||
-        !passenger.phone ||
-        !passenger.email
+        !passenger.phone.trim() ||
+        !passenger.email.trim()
       ) {
-        alert(`Please fill all details for Seat ${passenger.seat}`);
+
+        alert(
+          `Please fill all details for Seat ${passenger.seat}`
+        );
+
         return;
       }
     }
 
-    // IMPORTANT:
-    // Send totalAmount as totalPrice
     navigate("/payment", {
       state: {
         bus,
         selectedSeats,
         passengers,
-        totalPrice: totalAmount,
+        totalPrice,
       },
     });
   };
 
+
   if (!bus || selectedSeats.length === 0) {
+
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
+
         <div className="text-center">
+
           <h2 className="text-2xl font-bold">
             Booking information not found
           </h2>
@@ -77,17 +85,22 @@ const PassengerDetails = () => {
           >
             Back to Search
           </button>
+
         </div>
+
       </div>
     );
   }
+
 
   return (
     <div className="min-h-screen bg-gray-100">
 
       {/* HEADER */}
       <div className="bg-green-700 text-white">
+
         <div className="max-w-7xl mx-auto px-6 py-7">
+
           <p className="text-sm">
             Passenger Details
           </p>
@@ -95,17 +108,20 @@ const PassengerDetails = () => {
           <h1 className="text-3xl font-bold">
             Enter Passenger Information
           </h1>
+
         </div>
+
       </div>
+
 
       <div className="max-w-6xl mx-auto px-6 py-10">
 
         <form onSubmit={handleSubmit}>
 
-          {/* PASSENGERS */}
           <div className="space-y-8">
 
             {passengers.map((passenger, index) => (
+
               <div
                 key={passenger.seat}
                 className="bg-white rounded-xl shadow-md p-8"
@@ -123,8 +139,10 @@ const PassengerDetails = () => {
 
                 </div>
 
+
                 {/* NAME */}
                 <div className="mb-5">
+
                   <label className="block text-gray-700 mb-2">
                     Full Name
                   </label>
@@ -133,17 +151,24 @@ const PassengerDetails = () => {
                     type="text"
                     value={passenger.name}
                     onChange={(e) =>
-                      handleChange(index, "name", e.target.value)
+                      handleChange(
+                        index,
+                        "name",
+                        e.target.value
+                      )
                     }
                     placeholder="Enter full name"
                     className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
                   />
+
                 </div>
+
 
                 {/* AGE + GENDER */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
                   <div>
+
                     <label className="block text-gray-700 mb-2">
                       Age
                     </label>
@@ -152,14 +177,21 @@ const PassengerDetails = () => {
                       type="number"
                       value={passenger.age}
                       onChange={(e) =>
-                        handleChange(index, "age", e.target.value)
+                        handleChange(
+                          index,
+                          "age",
+                          e.target.value
+                        )
                       }
                       placeholder="Enter age"
                       className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
                     />
+
                   </div>
 
+
                   <div>
+
                     <label className="block text-gray-700 mb-2">
                       Gender
                     </label>
@@ -167,10 +199,15 @@ const PassengerDetails = () => {
                     <select
                       value={passenger.gender}
                       onChange={(e) =>
-                        handleChange(index, "gender", e.target.value)
+                        handleChange(
+                          index,
+                          "gender",
+                          e.target.value
+                        )
                       }
                       className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
                     >
+
                       <option value="">
                         Select Gender
                       </option>
@@ -186,13 +223,17 @@ const PassengerDetails = () => {
                       <option value="Other">
                         Other
                       </option>
+
                     </select>
+
                   </div>
 
                 </div>
 
+
                 {/* PHONE */}
                 <div className="mt-5">
+
                   <label className="block text-gray-700 mb-2">
                     Phone Number
                   </label>
@@ -201,15 +242,22 @@ const PassengerDetails = () => {
                     type="tel"
                     value={passenger.phone}
                     onChange={(e) =>
-                      handleChange(index, "phone", e.target.value)
+                      handleChange(
+                        index,
+                        "phone",
+                        e.target.value
+                      )
                     }
                     placeholder="Enter phone number"
                     className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
                   />
+
                 </div>
+
 
                 {/* EMAIL */}
                 <div className="mt-5">
+
                   <label className="block text-gray-700 mb-2">
                     Email Address
                   </label>
@@ -218,17 +266,24 @@ const PassengerDetails = () => {
                     type="email"
                     value={passenger.email}
                     onChange={(e) =>
-                      handleChange(index, "email", e.target.value)
+                      handleChange(
+                        index,
+                        "email",
+                        e.target.value
+                      )
                     }
                     placeholder="Enter email address"
                     className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
                   />
+
                 </div>
 
               </div>
+
             ))}
 
           </div>
+
 
           {/* SUMMARY */}
           <div className="bg-white rounded-xl shadow-md p-6 mt-8">
@@ -260,10 +315,11 @@ const PassengerDetails = () => {
             </p>
 
             <p className="text-2xl font-bold text-green-600">
-              ₹{totalAmount}
+              ₹{totalPrice}
             </p>
 
           </div>
+
 
           {/* BUTTONS */}
           <div className="flex gap-4 mt-8">
