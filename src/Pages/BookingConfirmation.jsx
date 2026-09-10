@@ -193,7 +193,7 @@ const BookingConfirmation = () => {
             </h2>
 
 
-            <div className="flex justify-between">
+            <div className="flex justify-between">  
 
               <span className="text-gray-500">
                 Payment Method

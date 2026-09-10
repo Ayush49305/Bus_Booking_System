@@ -261,6 +261,10 @@ const PaymentMethod = ({ totalPrice = 0, onPayment }) => {
               Axis Bank
             </option>
 
+            <option>
+              Bank of India
+            </option>
+
           </select>
 
         </div>
