@@ -1,167 +1,156 @@
-import React, { useState } from "react";
-import FilterSidebar from "../Components/FilterSidebar";
-import BusCard from "../Components/BusCard";
-import buses from "../data/buses";
+import React, { useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import BusCard from "../components/BusCard";
 
 const SearchResult = () => {
 
-  const [filters, setFilters] = useState({
-    busType: "",
-    departureTime: "",
-    maxPrice: 1200,
-  });
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const [sort, setSort] = useState("");
+  const searchData = location.state || {};
 
-  // FILTER BUSES
-  const filteredBuses = buses.filter((bus) => {
+  const {
+    from = "",
+    to = "",
+    date = "",
+  } = searchData;
 
-    // Bus Type Filter
-    if (filters.busType) {
 
-      if (filters.busType === "AC") {
-        if (!bus.type.includes("AC")) {
-          return false;
-        }
-      }
+  const buses = [
+    {
+      id: 1,
+      name: "Green Express",
+      type: "AC Sleeper",
+      departure: "06:30 AM",
+      arrival: "02:30 PM",
+      price: 850,
+      from: from || "Delhi",
+      to: to || "Jaipur",
+    },
 
-      if (filters.busType === "Non-AC") {
-        if (!bus.type.includes("Non-AC")) {
-          return false;
-        }
-      }
+    {
+      id: 2,
+      name: "Green Travels",
+      type: "AC Seater",
+      departure: "09:00 AM",
+      arrival: "05:00 PM",
+      price: 700,
+      from: from || "Delhi",
+      to: to || "Jaipur",
+    },
 
-      if (filters.busType === "Sleeper") {
-        if (!bus.type.includes("Sleeper")) {
-          return false;
-        }
-      }
+    {
+      id: 3,
+      name: "Green Roadways",
+      type: "Non-AC Sleeper",
+      departure: "10:30 PM",
+      arrival: "06:30 AM",
+      price: 600,
+      from: from || "Delhi",
+      to: to || "Jaipur",
+    },
+
+    {
+      id: 4,
+      name: "Green Premium",
+      type: "Volvo AC",
+      departure: "11:30 PM",
+      arrival: "07:00 AM",
+      price: 1200,
+      from: from || "Delhi",
+      to: to || "Jaipur",
+    },
+  ];
+
+
+  const [sort, setSort] = useState("default");
+  const [type, setType] = useState("all");
+
+
+  const filteredBuses = useMemo(() => {
+
+    let result = [...buses];
+
+
+    if (type !== "all") {
+
+      result = result.filter((bus) =>
+        bus.type.toLowerCase().includes(type.toLowerCase())
+      );
+
     }
 
-    // Price Filter
-    if (bus.price > filters.maxPrice) {
-      return false;
-    }
-
-    // Departure Time Filter
-    if (filters.departureTime) {
-
-      const hour = parseInt(bus.departure);
-
-      if (filters.departureTime === "Morning") {
-        if (hour < 5 || hour >= 12) {
-          return false;
-        }
-      }
-
-      if (filters.departureTime === "Afternoon") {
-        if (hour < 12 || hour >= 17) {
-          return false;
-        }
-      }
-
-      if (filters.departureTime === "Evening") {
-        if (hour < 17 || hour >= 21) {
-          return false;
-        }
-      }
-
-      if (filters.departureTime === "Night") {
-        if (hour < 21 || hour >= 24) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  });
-
-  // SORT BUSES
-  const sortedBuses = [...filteredBuses].sort((a, b) => {
 
     if (sort === "low") {
-      return a.price - b.price;
+
+      result.sort((a, b) => a.price - b.price);
+
     }
 
     if (sort === "high") {
-      return b.price - a.price;
+
+      result.sort((a, b) => b.price - a.price);
+
     }
 
-    return 0;
-  });
+
+    return result;
+
+  }, [sort, type]);
+
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="min-h-screen bg-gray-100">
 
-      {/* JOURNEY HEADER */}
-      <div className="bg-green-700 text-white">
+      <Navbar />
 
-        <div className="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
 
-          <div>
-            <p className="text-sm">
-              Your Journey
-            </p>
+      <div className="max-w-7xl mx-auto px-6 py-10">
 
-            <h1 className="text-3xl font-bold mt-1">
-              Delhi → Jaipur
-            </h1>
-          </div>
+        {/* HEADER */}
+        <div className="mb-8">
 
-          <div className="bg-white text-[#1e2a40] px-6 py-4 rounded-lg">
-            <p className="text-sm text-gray-500">
-              Journey Date
-            </p>
+          <button
+            onClick={() => navigate("/")}
+            className="text-green-600 font-medium mb-4"
+          >
+            ← Back to Search
+          </button>
 
-            <p className="font-semibold">
-              10 September 2026
-            </p>
-          </div>
+          <h1 className="text-3xl font-bold text-[#1e2a40]">
+            Available Buses
+          </h1>
+
+          <p className="text-gray-500 mt-2">
+            {from || "Delhi"} → {to || "Jaipur"}
+            {date && ` • ${date}`}
+          </p>
 
         </div>
 
-      </div>
 
-      {/* MAIN CONTENT */}
-      <div className="max-w-7xl mx-auto px-6 py-10">
+        {/* FILTER */}
+        <div className="bg-white rounded-xl shadow-md p-5 mb-8">
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-          {/* FILTER SIDEBAR */}
-          <div className="lg:col-span-1">
-            <FilterSidebar
-              filters={filters}
-              setFilters={setFilters}
-            />
-          </div>
+            <div>
 
-          {/* BUS RESULTS */}
-          <div className="lg:col-span-3">
+              <label className="block text-sm text-gray-600 mb-2">
+                Sort By
+              </label>
 
-            {/* HEADER */}
-            <div className="flex justify-between items-start mb-6">
-
-              <div>
-
-                <h2 className="text-2xl font-bold text-[#1e2a40]">
-                  Available Buses
-                </h2>
-
-                <p className="text-gray-500 mt-1">
-                  {sortedBuses.length} buses found for your route
-                </p>
-
-              </div>
-
-              {/* SORT */}
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value)}
-                className="border border-gray-300 bg-white rounded-lg px-4 py-3 outline-none"
+                className="w-full border rounded-lg px-4 py-3 outline-none"
               >
 
-                <option value="">
-                  Sort by Price
+                <option value="default">
+                  Recommended
                 </option>
 
                 <option value="low">
@@ -176,37 +165,81 @@ const SearchResult = () => {
 
             </div>
 
-            {/* CARDS */}
-            {sortedBuses.length > 0 ? (
 
-              sortedBuses.map((bus) => (
-                <BusCard
-                  key={bus.id}
-                  bus={bus}
-                />
-              ))
+            <div>
 
-            ) : (
+              <label className="block text-sm text-gray-600 mb-2">
+                Bus Type
+              </label>
 
-              <div className="bg-white rounded-xl shadow-md p-10 text-center">
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                className="w-full border rounded-lg px-4 py-3 outline-none"
+              >
 
-                <h2 className="text-xl font-semibold text-[#1e2a40]">
-                  No buses found
-                </h2>
+                <option value="all">
+                  All
+                </option>
 
-                <p className="text-gray-500 mt-2">
-                  Try changing your filters.
-                </p>
+                <option value="ac">
+                  AC
+                </option>
 
-              </div>
+                <option value="sleeper">
+                  Sleeper
+                </option>
 
-            )}
+                <option value="seater">
+                  Seater
+                </option>
+
+              </select>
+
+            </div>
 
           </div>
 
         </div>
 
+
+        {/* BUS LIST */}
+        <div className="space-y-5">
+
+          {filteredBuses.length > 0 ? (
+
+            filteredBuses.map((bus) => (
+
+              <BusCard
+                key={bus.id}
+                bus={bus}
+                searchData={searchData}
+              />
+
+            ))
+
+          ) : (
+
+            <div className="bg-white p-10 rounded-xl text-center">
+
+              <h2 className="text-xl font-bold">
+                No buses found
+              </h2>
+
+              <p className="text-gray-500 mt-2">
+                Try another filter.
+              </p>
+
+            </div>
+
+          )}
+
+        </div>
+
       </div>
+
+
+      <Footer />
 
     </div>
   );

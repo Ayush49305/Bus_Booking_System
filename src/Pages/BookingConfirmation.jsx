@@ -1,25 +1,53 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-import Navbar from "../Components/Navbar";
-import Footer from "../Components/Footer";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const BookingConfirmation = () => {
 
   const location = useLocation();
-  const navigate = useNavigate();
 
   const {
+    bookingId,
     bus,
     selectedSeats = [],
     passengers = [],
     totalPrice = 0,
     paymentMethod = "",
+    status = "Confirmed",
+    searchData,
   } = location.state || {};
 
 
-  const bookingId =
-    "BUS" + Math.floor(100000 + Math.random() * 900000);
+  if (!bus) {
+
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+
+        <div className="text-center">
+
+          <h2 className="text-2xl font-bold">
+            Booking information not found
+          </h2>
+
+          <Link
+            to="/"
+            className="inline-block mt-5 bg-green-600 text-white px-6 py-3 rounded-lg"
+          >
+            Go Home
+          </Link>
+
+        </div>
+
+      </div>
+    );
+  }
+
+
+  const handlePrint = () => {
+    window.print();
+  };
 
 
   return (
@@ -28,154 +56,167 @@ const BookingConfirmation = () => {
       <Navbar />
 
 
-      <main className="max-w-4xl mx-auto px-4 py-12">
+      <div className="max-w-4xl mx-auto px-6 py-10">
 
-        <div className="bg-white rounded-xl shadow-lg p-6 md:p-10">
+        {/* SUCCESS */}
+        <div className="bg-white rounded-xl shadow-md p-8 text-center">
 
+          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
 
-          {/* SUCCESS */}
-          <div className="text-center border-b pb-8">
-
-            <div className="w-20 h-20 mx-auto bg-green-100 text-green-600 rounded-full flex items-center justify-center text-4xl">
+            <span className="text-4xl text-green-600">
               ✓
-            </div>
-
-            <h1 className="text-3xl font-bold text-gray-800 mt-5">
-              Booking Confirmed!
-            </h1>
-
-            <p className="text-gray-500 mt-2">
-              Your bus ticket has been booked successfully.
-            </p>
+            </span>
 
           </div>
 
 
-          {/* BOOKING ID */}
-          <div className="text-center py-6 border-b">
+          <h1 className="text-3xl font-bold text-green-700 mt-5">
+            Booking Confirmed!
+          </h1>
 
-            <p className="text-sm text-gray-500">
+          <p className="text-gray-500 mt-2">
+            Your bus ticket has been booked successfully.
+          </p>
+
+
+          <div className="mt-6 bg-gray-50 rounded-lg p-5">
+
+            <p className="text-gray-500">
               Booking ID
             </p>
 
-            <p className="text-xl font-bold text-green-600 mt-1">
-              {bookingId}
+            <p className="text-2xl font-bold text-[#1e2a40]">
+              {bookingId || "GB00000000"}
             </p>
 
           </div>
 
-
-          {/* JOURNEY */}
-          <div className="py-6 border-b">
-
-            <h2 className="text-xl font-bold mb-5">
-              Journey Details
-            </h2>
+        </div>
 
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        {/* TICKET */}
+        <div className="bg-white rounded-xl shadow-md p-8 mt-8">
 
-              <div>
-
-                <p className="text-sm text-gray-500">
-                  Bus
-                </p>
-
-                <p className="font-semibold">
-                  {bus?.name || "-"}
-                </p>
-
-              </div>
+          <h2 className="text-2xl font-bold text-[#1e2a40] mb-6">
+            Ticket Details
+          </h2>
 
 
-              <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                <p className="text-sm text-gray-500">
-                  Route
-                </p>
+            <div>
+              <p className="text-gray-500 text-sm">
+                Bus
+              </p>
 
-                <p className="font-semibold">
-                  {bus?.from || "Delhi"} →{" "}
-                  {bus?.to || bus?.arrival || "Jaipur"}
-                </p>
-
-              </div>
-
-
-              <div>
-
-                <p className="text-sm text-gray-500">
-                  Departure
-                </p>
-
-                <p className="font-semibold">
-                  {bus?.departure || "-"}
-                </p>
-
-              </div>
+              <p className="font-semibold">
+                {bus.name}
+              </p>
+            </div>
 
 
-              <div>
+            <div>
+              <p className="text-gray-500 text-sm">
+                Bus Type
+              </p>
 
-                <p className="text-sm text-gray-500">
-                  Selected Seats
-                </p>
+              <p className="font-semibold">
+                {bus.type}
+              </p>
+            </div>
 
-                <p className="font-semibold">
-                  {selectedSeats.join(", ")}
-                </p>
 
-              </div>
+            <div>
+              <p className="text-gray-500 text-sm">
+                Route
+              </p>
 
+              <p className="font-semibold">
+                {bus.from || searchData?.from || "Delhi"}
+                {" → "}
+                {bus.to || searchData?.to || "Jaipur"}
+              </p>
+            </div>
+
+
+            <div>
+              <p className="text-gray-500 text-sm">
+                Departure
+              </p>
+
+              <p className="font-semibold">
+                {bus.departure}
+              </p>
+            </div>
+
+
+            <div>
+              <p className="text-gray-500 text-sm">
+                Seats
+              </p>
+
+              <p className="font-semibold">
+                {selectedSeats.join(", ")}
+              </p>
+            </div>
+
+
+            <div>
+              <p className="text-gray-500 text-sm">
+                Payment Method
+              </p>
+
+              <p className="font-semibold capitalize">
+                {paymentMethod}
+              </p>
             </div>
 
           </div>
 
 
           {/* PASSENGERS */}
-          <div className="py-6 border-b">
+          <div className="mt-8">
 
-            <h2 className="text-xl font-bold mb-5">
+            <h3 className="text-xl font-bold mb-4">
               Passenger Details
-            </h2>
-
+            </h3>
 
             <div className="space-y-4">
 
               {selectedSeats.map((seat) => {
 
-                const passenger = passengers.find(
-                  (item) =>
-                    Number(item.seat) === Number(seat)
-                );
+                const passenger =
+                  passengers.find(
+                    (item) =>
+                      Number(item.seat) === Number(seat)
+                  );
+
 
                 return (
-
                   <div
                     key={seat}
-                    className="flex justify-between items-center bg-gray-50 p-4 rounded-lg"
+                    className="border rounded-lg p-4 flex justify-between"
                   >
 
                     <div>
 
                       <p className="font-semibold">
-                        {passenger?.name || "Passenger"}
+                        {passenger?.name}
                       </p>
 
-                      <p className="text-sm text-gray-500">
-                        {passenger?.age || "-"} years •{" "}
-                        {passenger?.gender || "-"}
+                      <p className="text-gray-500 text-sm">
+                        Age: {passenger?.age}
+                        {" • "}
+                        Gender: {passenger?.gender}
                       </p>
 
                     </div>
 
-
-                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-md font-medium">
+                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-lg h-fit">
                       Seat {seat}
                     </span>
 
                   </div>
-
                 );
 
               })}
@@ -185,65 +226,58 @@ const BookingConfirmation = () => {
           </div>
 
 
-          {/* PAYMENT */}
-          <div className="py-6">
+          {/* TOTAL */}
+          <div className="border-t mt-8 pt-6 flex justify-between">
 
-            <h2 className="text-xl font-bold mb-5">
-              Payment Details
-            </h2>
+            <span className="text-xl font-bold">
+              Total Paid
+            </span>
 
-
-            <div className="flex justify-between">  
-
-              <span className="text-gray-500">
-                Payment Method
-              </span>
-
-              <span className="font-semibold uppercase">
-                {paymentMethod || "-"}
-              </span>
-
-            </div>
-
-
-            <div className="flex justify-between mt-4 text-lg font-bold">
-
-              <span>
-                Total Paid
-              </span>
-
-              <span className="text-green-600">
-                ₹{totalPrice}
-              </span>
-
-            </div>
+            <span className="text-2xl font-bold text-green-600">
+              ₹{totalPrice}
+            </span>
 
           </div>
 
 
-          {/* BUTTONS */}
-          <div className="flex flex-col sm:flex-row gap-4 mt-4">
+          <div className="mt-6">
 
-            <button
-              onClick={() => navigate("/")}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold"
-            >
-              BACK TO HOME
-            </button>
-
-
-            <button
-              onClick={() => window.print()}
-              className="flex-1 border border-green-600 text-green-600 hover:bg-green-50 py-3 rounded-lg font-semibold"
-            >
-              PRINT TICKET
-            </button>
+            <span className="bg-green-100 text-green-700 px-4 py-2 rounded-lg font-semibold">
+              {status}
+            </span>
 
           </div>
 
         </div>
 
-      </main>
+
+        {/* BUTTONS */}
+        <div className="flex flex-col md:flex-row gap-4 mt-8">
+
+          <button
+            onClick={handlePrint}
+            className="flex-1 border border-gray-300 bg-white py-3 rounded-lg font-semibold"
+          >
+            Print Ticket
+          </button>
+
+          <Link
+            to="/my-bookings"
+            className="flex-1 text-center bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold"
+          >
+            My Bookings
+          </Link>
+
+          <Link
+            to="/"
+            className="flex-1 text-center border border-green-600 text-green-600 py-3 rounded-lg font-semibold"
+          >
+            Book Another Ticket
+          </Link>
+
+        </div>
+
+      </div>
 
 
       <Footer />

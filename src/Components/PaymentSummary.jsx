@@ -10,13 +10,13 @@ const PaymentSummary = ({
   return (
     <div className="bg-white rounded-xl shadow-md p-6 h-fit sticky top-5">
 
-      <h2 className="text-xl font-bold text-[#1e2a40] pb-4 border-b border-gray-300">
+      <h2 className="text-xl font-bold text-[#1e2a40] pb-4 border-b">
         Booking Summary
       </h2>
 
 
       {/* BUS */}
-      <div className="py-5 border-b border-gray-300 space-y-4">
+      <div className="py-5 border-b space-y-4">
 
         <div className="flex justify-between gap-4">
 
@@ -38,14 +38,17 @@ const PaymentSummary = ({
           </span>
 
           <span className="font-medium text-right">
-            {bus?.from || "Delhi"} →{" "}
+
+            {bus?.from || "Delhi"}
+            {" → "}
             {bus?.to || bus?.arrival || "Jaipur"}
+
           </span>
 
         </div>
 
 
-        <div className="flex justify-between gap-4">
+        <div className="flex justify-between">
 
           <span className="text-gray-500">
             Departure
@@ -61,7 +64,7 @@ const PaymentSummary = ({
 
 
       {/* SEATS */}
-      <div className="py-5 border-b border-gray-300">
+      <div className="py-5 border-b">
 
         <p className="text-sm font-medium text-gray-500 mb-3">
           Selected Seats
@@ -86,7 +89,7 @@ const PaymentSummary = ({
 
 
       {/* PASSENGERS */}
-      <div className="py-5 border-b border-gray-300">
+      <div className="py-5 border-b">
 
         <p className="text-sm font-medium text-gray-500 mb-3">
           Passengers
@@ -96,21 +99,22 @@ const PaymentSummary = ({
 
           {selectedSeats.map((seat) => {
 
-            const passenger = passengers.find(
-              (item) =>
-                Number(item.seat) === Number(seat)
-            );
+            const passenger =
+              passengers.find(
+                (item) =>
+                  Number(item.seat) === Number(seat)
+              );
+
 
             return (
-
               <div
                 key={seat}
-                className="flex justify-between items-center gap-3"
+                className="flex justify-between"
               >
 
                 <div>
 
-                  <p className="font-medium text-gray-800">
+                  <p className="font-medium">
                     {passenger?.name || "Passenger"}
                   </p>
 
@@ -122,13 +126,11 @@ const PaymentSummary = ({
 
                 </div>
 
-
                 <span className="text-green-600 font-medium">
-                  {seat}
+                  Seat {seat}
                 </span>
 
               </div>
-
             );
 
           })}
@@ -139,19 +141,15 @@ const PaymentSummary = ({
 
 
       {/* TOTAL */}
-      <div className="pt-5">
+      <div className="pt-5 flex justify-between text-lg font-bold">
 
-        <div className="flex justify-between text-lg font-bold">
+        <span>
+          Total Amount
+        </span>
 
-          <span>
-            Total Amount
-          </span>
-
-          <span className="text-green-600">
-            ₹{totalPrice}
-          </span>
-
-        </div>
+        <span className="text-green-600">
+          ₹{totalPrice}
+        </span>
 
       </div>
 

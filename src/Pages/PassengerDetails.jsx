@@ -6,11 +6,14 @@ const PassengerDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+
   const {
     bus,
     selectedSeats = [],
     totalPrice = 0,
+    searchData,
   } = location.state || {};
+
 
   const [passengers, setPassengers] = useState(
     selectedSeats.map((seat) => ({
@@ -23,9 +26,16 @@ const PassengerDetails = () => {
     }))
   );
 
-  const handleChange = (index, field, value) => {
 
-    const updatedPassengers = [...passengers];
+  const handleChange = (
+    index,
+    field,
+    value
+  ) => {
+
+    const updatedPassengers = [
+      ...passengers,
+    ];
 
     updatedPassengers[index] = {
       ...updatedPassengers[index],
@@ -33,11 +43,14 @@ const PassengerDetails = () => {
     };
 
     setPassengers(updatedPassengers);
+
   };
+
 
   const handleSubmit = (e) => {
 
     e.preventDefault();
+
 
     for (const passenger of passengers) {
 
@@ -55,7 +68,22 @@ const PassengerDetails = () => {
 
         return;
       }
+
+
+      if (
+        passenger.phone.length !== 10 ||
+        isNaN(passenger.phone)
+      ) {
+
+        alert(
+          `Please enter a valid 10-digit phone number for Seat ${passenger.seat}`
+        );
+
+        return;
+      }
+
     }
+
 
     navigate("/payment", {
       state: {
@@ -63,15 +91,17 @@ const PassengerDetails = () => {
         selectedSeats,
         passengers,
         totalPrice,
+        searchData,
       },
     });
+
   };
 
 
   if (!bus || selectedSeats.length === 0) {
 
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="min-h-screen flex items-center justify-center">
 
         <div className="text-center">
 
@@ -96,7 +126,6 @@ const PassengerDetails = () => {
   return (
     <div className="min-h-screen bg-gray-100">
 
-      {/* HEADER */}
       <div className="bg-green-700 text-white">
 
         <div className="max-w-7xl mx-auto px-6 py-7">
@@ -120,167 +149,177 @@ const PassengerDetails = () => {
 
           <div className="space-y-8">
 
-            {passengers.map((passenger, index) => (
+            {passengers.map(
+              (passenger, index) => (
 
-              <div
-                key={passenger.seat}
-                className="bg-white rounded-xl shadow-md p-8"
-              >
+                <div
+                  key={passenger.seat}
+                  className="bg-white rounded-xl shadow-md p-8"
+                >
 
-                <div className="flex justify-between items-center mb-6">
+                  <div className="flex justify-between items-center mb-6">
 
-                  <h2 className="text-xl font-bold text-[#1e2a40]">
-                    Passenger {index + 1}
-                  </h2>
+                    <h2 className="text-xl font-bold text-[#1e2a40]">
+                      Passenger {index + 1}
+                    </h2>
 
-                  <span className="bg-green-100 text-green-700 px-4 py-2 rounded-lg font-semibold">
-                    Seat {passenger.seat}
-                  </span>
+                    <span className="bg-green-100 text-green-700 px-4 py-2 rounded-lg font-semibold">
+                      Seat {passenger.seat}
+                    </span>
 
-                </div>
-
-
-                {/* NAME */}
-                <div className="mb-5">
-
-                  <label className="block text-gray-700 mb-2">
-                    Full Name
-                  </label>
-
-                  <input
-                    type="text"
-                    value={passenger.name}
-                    onChange={(e) =>
-                      handleChange(
-                        index,
-                        "name",
-                        e.target.value
-                      )
-                    }
-                    placeholder="Enter full name"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
-                  />
-
-                </div>
+                  </div>
 
 
-                {/* AGE + GENDER */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-                  <div>
+                  {/* NAME */}
+                  <div className="mb-5">
 
                     <label className="block text-gray-700 mb-2">
-                      Age
+                      Full Name
                     </label>
 
                     <input
-                      type="number"
-                      value={passenger.age}
+                      type="text"
+                      required
+                      value={passenger.name}
                       onChange={(e) =>
                         handleChange(
                           index,
-                          "age",
+                          "name",
                           e.target.value
                         )
                       }
-                      placeholder="Enter age"
+                      placeholder="Enter full name"
                       className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
                     />
 
                   </div>
 
 
-                  <div>
+                  {/* AGE + GENDER */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    <div>
+
+                      <label className="block text-gray-700 mb-2">
+                        Age
+                      </label>
+
+                      <input
+                        type="number"
+                        min="1"
+                        max="120"
+                        required
+                        value={passenger.age}
+                        onChange={(e) =>
+                          handleChange(
+                            index,
+                            "age",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Enter age"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
+                      />
+
+                    </div>
+
+
+                    <div>
+
+                      <label className="block text-gray-700 mb-2">
+                        Gender
+                      </label>
+
+                      <select
+                        required
+                        value={passenger.gender}
+                        onChange={(e) =>
+                          handleChange(
+                            index,
+                            "gender",
+                            e.target.value
+                          )
+                        }
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
+                      >
+
+                        <option value="">
+                          Select Gender
+                        </option>
+
+                        <option value="Male">
+                          Male
+                        </option>
+
+                        <option value="Female">
+                          Female
+                        </option>
+
+                        <option value="Other">
+                          Other
+                        </option>
+
+                      </select>
+
+                    </div>
+
+                  </div>
+
+
+                  {/* PHONE */}
+                  <div className="mt-5">
 
                     <label className="block text-gray-700 mb-2">
-                      Gender
+                      Phone Number
                     </label>
 
-                    <select
-                      value={passenger.gender}
+                    <input
+                      type="tel"
+                      required
+                      maxLength="10"
+                      value={passenger.phone}
                       onChange={(e) =>
                         handleChange(
                           index,
-                          "gender",
+                          "phone",
+                          e.target.value.replace(/\D/g, "")
+                        )
+                      }
+                      placeholder="10-digit phone number"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
+                    />
+
+                  </div>
+
+
+                  {/* EMAIL */}
+                  <div className="mt-5">
+
+                    <label className="block text-gray-700 mb-2">
+                      Email Address
+                    </label>
+
+                    <input
+                      type="email"
+                      required
+                      value={passenger.email}
+                      onChange={(e) =>
+                        handleChange(
+                          index,
+                          "email",
                           e.target.value
                         )
                       }
+                      placeholder="Enter email address"
                       className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
-                    >
-
-                      <option value="">
-                        Select Gender
-                      </option>
-
-                      <option value="Male">
-                        Male
-                      </option>
-
-                      <option value="Female">
-                        Female
-                      </option>
-
-                      <option value="Other">
-                        Other
-                      </option>
-
-                    </select>
+                    />
 
                   </div>
 
                 </div>
 
-
-                {/* PHONE */}
-                <div className="mt-5">
-
-                  <label className="block text-gray-700 mb-2">
-                    Phone Number
-                  </label>
-
-                  <input
-                    type="tel"
-                    value={passenger.phone}
-                    onChange={(e) =>
-                      handleChange(
-                        index,
-                        "phone",
-                        e.target.value
-                      )
-                    }
-                    placeholder="Enter phone number"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
-                  />
-
-                </div>
-
-
-                {/* EMAIL */}
-                <div className="mt-5">
-
-                  <label className="block text-gray-700 mb-2">
-                    Email Address
-                  </label>
-
-                  <input
-                    type="email"
-                    value={passenger.email}
-                    onChange={(e) =>
-                      handleChange(
-                        index,
-                        "email",
-                        e.target.value
-                      )
-                    }
-                    placeholder="Enter email address"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
-                  />
-
-                </div>
-
-              </div>
-
-            ))}
+              )
+            )}
 
           </div>
 
@@ -321,7 +360,6 @@ const PassengerDetails = () => {
           </div>
 
 
-          {/* BUTTONS */}
           <div className="flex gap-4 mt-8">
 
             <button

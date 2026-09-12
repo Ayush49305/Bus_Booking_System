@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 
 const SearchBox = () => {
   const navigate = useNavigate();
+
+  const { t } = useLanguage();
 
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -39,13 +42,13 @@ const SearchBox = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           
           <div>
-            <label className="block text-gray-600 text-sm mb-2 ">
-              From
+            <label className="block text-gray-600 text-sm mb-2">
+              {t.from}
             </label>
 
             <input
               type="text"
-              placeholder="Enter departure city"
+              placeholder={t.departureCity}
               value={from}
               onChange={(e) => setFrom(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
@@ -54,12 +57,12 @@ const SearchBox = () => {
 
           <div>
             <label className="block text-gray-600 text-sm mb-2">
-              To
+              {t.to}
             </label>
 
             <input
               type="text"
-              placeholder="Enter destination city"
+              placeholder={t.destinationCity}
               value={to}
               onChange={(e) => setTo(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
@@ -71,7 +74,7 @@ const SearchBox = () => {
         {/* Date */}
         <div className="mt-5">
           <label className="block text-gray-600 text-sm mb-2">
-            Journey Date
+            {t.journeyDate}
           </label>
 
           <input
@@ -83,12 +86,12 @@ const SearchBox = () => {
           />
         </div>
 
-        {/* Button */}
+        {/* Search Button */}
         <button
           type="submit"
           className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-lg transition"
         >
-          SEARCH BUSES
+          {t.searchBuses}
         </button>
 
       </form>

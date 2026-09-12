@@ -1,11 +1,67 @@
 import React, { useState } from "react";
 
-const PaymentMethod = ({ totalPrice = 0, onPayment }) => {
+const PaymentMethod = ({
+  totalPrice = 0,
+  onPayment,
+}) => {
 
-  const [paymentMethod, setPaymentMethod] = useState("upi");
+  const [paymentMethod, setPaymentMethod] =
+    useState("upi");
+
+  const [upi, setUpi] = useState("");
+
+  const [card, setCard] = useState({
+    number: "",
+    holder: "",
+    expiry: "",
+    cvv: "",
+  });
+
+  const [bank, setBank] = useState("");
 
 
   const handlePayment = () => {
+
+    if (paymentMethod === "upi") {
+
+      if (!upi.trim()) {
+
+        alert("Please enter your UPI ID.");
+
+        return;
+      }
+
+    }
+
+
+    if (paymentMethod === "card") {
+
+      if (
+        !card.number ||
+        !card.holder ||
+        !card.expiry ||
+        !card.cvv
+      ) {
+
+        alert("Please fill all card details.");
+
+        return;
+      }
+
+    }
+
+
+    if (paymentMethod === "netbanking") {
+
+      if (!bank) {
+
+        alert("Please select your bank.");
+
+        return;
+      }
+
+    }
+
 
     onPayment(paymentMethod);
 
@@ -20,113 +76,50 @@ const PaymentMethod = ({ totalPrice = 0, onPayment }) => {
       </h2>
 
 
-      {/* PAYMENT OPTIONS */}
+      {/* OPTIONS */}
       <div className="space-y-4 mb-8">
 
+        {[
+          ["card", "Credit / Debit Card", "Pay using your card"],
+          ["upi", "UPI", "Pay using UPI ID"],
+          ["netbanking", "Net Banking", "Pay directly from your bank account"],
+        ].map(([value, title, subtitle]) => (
 
-        {/* CARD */}
-        <label
-          className={`flex items-center gap-4 border rounded-lg p-4 cursor-pointer transition ${
-            paymentMethod === "card"
-              ? "border-green-600 bg-green-50"
-              : "border-gray-200"
-          }`}
-        >
+          <label
+            key={value}
+            className={`flex items-center gap-4 border rounded-lg p-4 cursor-pointer ${
+              paymentMethod === value
+                ? "border-green-600 bg-green-50"
+                : "border-gray-200"
+            }`}
+          >
 
-          <input
-            type="radio"
-            name="payment"
-            value="card"
-            checked={paymentMethod === "card"}
-            onChange={(e) =>
-              setPaymentMethod(e.target.value)
-            }
-            className="accent-green-600"
-          />
+            <input
+              type="radio"
+              name="payment"
+              value={value}
+              checked={paymentMethod === value}
+              onChange={(e) =>
+                setPaymentMethod(e.target.value)
+              }
+              className="accent-green-600"
+            />
 
-          <div>
+            <div>
 
-            <p className="font-semibold text-gray-800">
-              Credit / Debit Card
-            </p>
+              <p className="font-semibold text-gray-800">
+                {title}
+              </p>
 
-            <p className="text-sm text-gray-500">
-              Pay using your card
-            </p>
+              <p className="text-sm text-gray-500">
+                {subtitle}
+              </p>
 
-          </div>
+            </div>
 
-        </label>
+          </label>
 
-
-        {/* UPI */}
-        <label
-          className={`flex items-center gap-4 border rounded-lg p-4 cursor-pointer transition ${
-            paymentMethod === "upi"
-              ? "border-green-600 bg-green-50"
-              : "border-gray-200"
-          }`}
-        >
-
-          <input
-            type="radio"
-            name="payment"
-            value="upi"
-            checked={paymentMethod === "upi"}
-            onChange={(e) =>
-              setPaymentMethod(e.target.value)
-            }
-            className="accent-green-600"
-          />
-
-          <div>
-
-            <p className="font-semibold text-gray-800">
-              UPI
-            </p>
-
-            <p className="text-sm text-gray-500">
-              Pay using UPI ID
-            </p>
-
-          </div>
-
-        </label>
-
-
-        {/* NET BANKING */}
-        <label
-          className={`flex items-center gap-4 border rounded-lg p-4 cursor-pointer transition ${
-            paymentMethod === "netbanking"
-              ? "border-green-600 bg-green-50"
-              : "border-gray-200"
-          }`}
-        >
-
-          <input
-            type="radio"
-            name="payment"
-            value="netbanking"
-            checked={paymentMethod === "netbanking"}
-            onChange={(e) =>
-              setPaymentMethod(e.target.value)
-            }
-            className="accent-green-600"
-          />
-
-          <div>
-
-            <p className="font-semibold text-gray-800">
-              Net Banking
-            </p>
-
-            <p className="text-sm text-gray-500">
-              Pay directly from your bank account
-            </p>
-
-          </div>
-
-        </label>
+        ))}
 
       </div>
 
@@ -140,66 +133,60 @@ const PaymentMethod = ({ totalPrice = 0, onPayment }) => {
             Card Details
           </h3>
 
-          <div>
+          <input
+            type="text"
+            value={card.number}
+            onChange={(e) =>
+              setCard({
+                ...card,
+                number: e.target.value,
+              })
+            }
+            placeholder="1234 5678 9012 3456"
+            className="w-full border rounded-lg px-4 py-3 outline-none focus:border-green-600"
+          />
 
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Card Number
-            </label>
-
-            <input
-              type="text"
-              placeholder="1234 5678 9012 3456"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
-            />
-
-          </div>
-
-
-          <div>
-
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Card Holder Name
-            </label>
-
-            <input
-              type="text"
-              placeholder="Enter card holder name"
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
-            />
-
-          </div>
-
+          <input
+            type="text"
+            value={card.holder}
+            onChange={(e) =>
+              setCard({
+                ...card,
+                holder: e.target.value,
+              })
+            }
+            placeholder="Card holder name"
+            className="w-full border rounded-lg px-4 py-3 outline-none focus:border-green-600"
+          />
 
           <div className="grid grid-cols-2 gap-5">
 
-            <div>
+            <input
+              type="text"
+              value={card.expiry}
+              onChange={(e) =>
+                setCard({
+                  ...card,
+                  expiry: e.target.value,
+                })
+              }
+              placeholder="MM/YY"
+              className="w-full border rounded-lg px-4 py-3 outline-none focus:border-green-600"
+            />
 
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Expiry Date
-              </label>
-
-              <input
-                type="text"
-                placeholder="MM/YY"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
-              />
-
-            </div>
-
-
-            <div>
-
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                CVV
-              </label>
-
-              <input
-                type="password"
-                placeholder="123"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
-              />
-
-            </div>
+            <input
+              type="password"
+              value={card.cvv}
+              onChange={(e) =>
+                setCard({
+                  ...card,
+                  cvv: e.target.value,
+                })
+              }
+              placeholder="CVV"
+              maxLength="3"
+              className="w-full border rounded-lg px-4 py-3 outline-none focus:border-green-600"
+            />
 
           </div>
 
@@ -219,6 +206,8 @@ const PaymentMethod = ({ totalPrice = 0, onPayment }) => {
 
           <input
             type="text"
+            value={upi}
+            onChange={(e) => setUpi(e.target.value)}
             placeholder="example@upi"
             className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
           />
@@ -228,7 +217,7 @@ const PaymentMethod = ({ totalPrice = 0, onPayment }) => {
       )}
 
 
-      {/* NET BANKING */}
+      {/* BANK */}
       {paymentMethod === "netbanking" && (
 
         <div className="border-t pt-6">
@@ -238,30 +227,32 @@ const PaymentMethod = ({ totalPrice = 0, onPayment }) => {
           </label>
 
           <select
+            value={bank}
+            onChange={(e) => setBank(e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
           >
 
-            <option>
+            <option value="">
               Select your bank
             </option>
 
-            <option>
+            <option value="State Bank of India">
               State Bank of India
             </option>
 
-            <option>
+            <option value="HDFC Bank">
               HDFC Bank
             </option>
 
-            <option>
+            <option value="ICICI Bank">
               ICICI Bank
             </option>
 
-            <option>
+            <option value="Axis Bank">
               Axis Bank
             </option>
 
-            <option>
+            <option value="Bank of India">
               Bank of India
             </option>
 
@@ -272,12 +263,12 @@ const PaymentMethod = ({ totalPrice = 0, onPayment }) => {
       )}
 
 
-      {/* PAY BUTTON */}
+      {/* PAY */}
       <button
         onClick={handlePayment}
-        className="w-full mt-8 bg-green-600 hover:bg-green-700 text-white py-4 rounded-lg font-semibold transition"
+        className="w-full mt-8 bg-green-600 hover:bg-green-700 text-white py-4 rounded-lg font-semibold"
       >
-        PAY ₹{totalPrice}
+        Pay ₹{totalPrice}
       </button>
 
     </div>
