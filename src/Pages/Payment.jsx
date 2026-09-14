@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import PaymentMethod from "../components/PaymentMethod";
+import PaymentMethod from "../Components/PaymentMethod";
 import PaymentSummary from "../components/PaymentSummary";
 
 const Payment = () => {

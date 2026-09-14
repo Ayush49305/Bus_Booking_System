@@ -1,16 +1,19 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route } from "react-router-dom";
 
-import Home from './Pages/Home'
-import SearchResults from './Pages/SearchResult'
-import SeatSelection from './Pages/SeatSelection'
-import PassengerDetails from './Pages/PassengerDetails'
-import Payment from './Pages/Payment'
-import BookingConfirmation from './Pages/BookingConfirmation'
+import Home from "./Pages/Home";
+import SearchResults from "./Pages/SearchResult";
+import SeatSelection from "./Pages/SeatSelection";
+import PassengerDetails from "./Pages/PassengerDetails";
+import Payment from "./Pages/Payment";
+import BookingConfirmation from "./Pages/BookingConfirmation";
 
-import MyBookings from './Pages/MyBookings'
-import About from './Pages/About'
-import Help from './Pages/Help'
-import Contact from './Pages/Contact'
+import MyBookings from "./Pages/MyBookings";
+import About from "./Pages/About";
+import Help from "./Pages/Help";
+import Contact from "./Pages/Contact";
+
+import Login from "./Pages/Login";
+import Signup from "./Pages/Signup";
 
 const App = () => {
   return (
@@ -53,17 +56,29 @@ const App = () => {
         element={<About />}
       />
 
-      <Route 
-        path="/help" 
+      <Route
+        path="/help"
         element={<Help />}
-       />
-      <Route 
-        path="/contact" 
-        element={<Contact />} 
+      />
+
+      <Route
+        path="/contact"
+        element={<Contact />}
+      />
+
+      {/* Authentication */}
+      <Route
+        path="/login"
+        element={<Login />}
+      />
+
+      <Route
+        path="/signup"
+        element={<Signup />}
       />
 
     </Routes>
-  )
-}
+  );
+};
 
-export default App
+export default App;
