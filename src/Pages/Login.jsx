@@ -1,12 +1,18 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
+import Navbar from "../Components/Navbar";
+import Footer from "../Components/Footer";
+
 import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
-
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { login } = useAuth();
 
@@ -16,21 +22,18 @@ const Login = () => {
   const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
-
     e.preventDefault();
 
     setError("");
 
-    // Check fields
+    // Validation
     if (!email || !password) {
       setError("Please enter email and password.");
       return;
     }
 
-    const result = login(
-      email,
-      password
-    );
+    // Login
+    const result = login(email, password);
 
     if (!result.success) {
       setError(result.message);
@@ -39,7 +42,24 @@ const Login = () => {
 
     alert("Login successful!");
 
-    navigate("/");
+    /*
+      Check whether the user came from
+      the booking process.
+    */
+
+    const bookingData = location.state;
+
+    if (bookingData?.from === "/seat-selection") {
+      navigate("/seat-selection", {
+        state: {
+          bus: bookingData.bus,
+          searchData: bookingData.searchData,
+        },
+      });
+    } else {
+      // Normal login
+      navigate("/");
+    }
   };
 
   return (
@@ -50,7 +70,7 @@ const Login = () => {
 
         <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
 
-          {/* Heading */}
+          {/* TITLE */}
           <div className="text-center mb-8">
 
             <h1 className="text-3xl font-semibold text-gray-800">
@@ -63,16 +83,17 @@ const Login = () => {
 
           </div>
 
-          {/* Error */}
+          {/* ERROR */}
           {error && (
             <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg mb-5">
               {error}
             </div>
           )}
 
+          {/* LOGIN FORM */}
           <form onSubmit={handleSubmit}>
 
-            {/* Email */}
+            {/* EMAIL */}
             <div className="mb-5">
 
               <label className="block text-gray-700 mb-2">
@@ -89,7 +110,7 @@ const Login = () => {
 
             </div>
 
-            {/* Password */}
+            {/* PASSWORD */}
             <div className="mb-6">
 
               <label className="block text-gray-700 mb-2">
@@ -106,7 +127,7 @@ const Login = () => {
 
             </div>
 
-            {/* Login Button */}
+            {/* LOGIN BUTTON */}
             <button
               type="submit"
               className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition"
@@ -116,13 +137,14 @@ const Login = () => {
 
           </form>
 
-          {/* Signup Link */}
+          {/* SIGNUP LINK */}
           <p className="text-center text-gray-600 mt-6">
 
             Don't have an account?{" "}
 
             <Link
               to="/signup"
+              state={location.state}
               className="text-green-600 font-semibold hover:underline"
             >
               Sign Up

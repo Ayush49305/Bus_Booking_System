@@ -4,9 +4,7 @@ const PaymentMethod = ({
   totalPrice = 0,
   onPayment,
 }) => {
-
-  const [paymentMethod, setPaymentMethod] =
-    useState("upi");
+  const [paymentMethod, setPaymentMethod] = useState("upi");
 
   const [upi, setUpi] = useState("");
 
@@ -19,54 +17,39 @@ const PaymentMethod = ({
 
   const [bank, setBank] = useState("");
 
-
   const handlePayment = () => {
-
+    // UPI validation
     if (paymentMethod === "upi") {
-
       if (!upi.trim()) {
-
         alert("Please enter your UPI ID.");
-
         return;
       }
-
     }
 
-
+    // Card validation
     if (paymentMethod === "card") {
-
       if (
         !card.number ||
         !card.holder ||
         !card.expiry ||
         !card.cvv
       ) {
-
         alert("Please fill all card details.");
-
         return;
       }
-
     }
 
-
+    // Net Banking validation
     if (paymentMethod === "netbanking") {
-
       if (!bank) {
-
         alert("Please select your bank.");
-
         return;
       }
-
     }
 
-
+    // Cash does not need any additional details
     onPayment(paymentMethod);
-
   };
-
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6 md:p-8">
@@ -75,58 +58,133 @@ const PaymentMethod = ({
         Payment Method
       </h2>
 
-
       {/* OPTIONS */}
       <div className="space-y-4 mb-8">
 
-        {[
-          ["card", "Credit / Debit Card", "Pay using your card"],
-          ["upi", "UPI", "Pay using UPI ID"],
-          ["netbanking", "Net Banking", "Pay directly from your bank account"],
-        ].map(([value, title, subtitle]) => (
+        {/* CARD */}
+        <label
+          className={`flex items-center gap-4 border rounded-lg p-4 cursor-pointer ${
+            paymentMethod === "card"
+              ? "border-green-600 bg-green-50"
+              : "border-gray-200"
+          }`}
+        >
+          <input
+            type="radio"
+            name="payment"
+            value="card"
+            checked={paymentMethod === "card"}
+            onChange={(e) =>
+              setPaymentMethod(e.target.value)
+            }
+            className="accent-green-600"
+          />
 
-          <label
-            key={value}
-            className={`flex items-center gap-4 border rounded-lg p-4 cursor-pointer ${
-              paymentMethod === value
-                ? "border-green-600 bg-green-50"
-                : "border-gray-200"
-            }`}
-          >
+          <div>
+            <p className="font-semibold text-gray-800">
+              Credit / Debit Card
+            </p>
 
-            <input
-              type="radio"
-              name="payment"
-              value={value}
-              checked={paymentMethod === value}
-              onChange={(e) =>
-                setPaymentMethod(e.target.value)
-              }
-              className="accent-green-600"
-            />
+            <p className="text-sm text-gray-500">
+              Pay using your card
+            </p>
+          </div>
+        </label>
 
-            <div>
+        {/* UPI */}
+        <label
+          className={`flex items-center gap-4 border rounded-lg p-4 cursor-pointer ${
+            paymentMethod === "upi"
+              ? "border-green-600 bg-green-50"
+              : "border-gray-200"
+          }`}
+        >
+          <input
+            type="radio"
+            name="payment"
+            value="upi"
+            checked={paymentMethod === "upi"}
+            onChange={(e) =>
+              setPaymentMethod(e.target.value)
+            }
+            className="accent-green-600"
+          />
 
-              <p className="font-semibold text-gray-800">
-                {title}
-              </p>
+          <div>
+            <p className="font-semibold text-gray-800">
+              UPI
+            </p>
 
-              <p className="text-sm text-gray-500">
-                {subtitle}
-              </p>
+            <p className="text-sm text-gray-500">
+              Pay using UPI ID
+            </p>
+          </div>
+        </label>
 
-            </div>
+        {/* NET BANKING */}
+        <label
+          className={`flex items-center gap-4 border rounded-lg p-4 cursor-pointer ${
+            paymentMethod === "netbanking"
+              ? "border-green-600 bg-green-50"
+              : "border-gray-200"
+          }`}
+        >
+          <input
+            type="radio"
+            name="payment"
+            value="netbanking"
+            checked={paymentMethod === "netbanking"}
+            onChange={(e) =>
+              setPaymentMethod(e.target.value)
+            }
+            className="accent-green-600"
+          />
 
-          </label>
+          <div>
+            <p className="font-semibold text-gray-800">
+              Net Banking
+            </p>
 
-        ))}
+            <p className="text-sm text-gray-500">
+              Pay directly from your bank account
+            </p>
+          </div>
+        </label>
+
+        {/* CASH */}
+        <label
+          className={`flex items-center gap-4 border rounded-lg p-4 cursor-pointer ${
+            paymentMethod === "cash"
+              ? "border-green-600 bg-green-50"
+              : "border-gray-200"
+          }`}
+        >
+          <input
+            type="radio"
+            name="payment"
+            value="cash"
+            checked={paymentMethod === "cash"}
+            onChange={(e) =>
+              setPaymentMethod(e.target.value)
+            }
+            className="accent-green-600"
+          />
+
+          <div>
+            <p className="font-semibold text-gray-800">
+              Pay via Cash
+            </p>
+
+            <p className="text-sm text-gray-500">
+              Pay cash at the boarding point
+            </p>
+          </div>
+        </label>
 
       </div>
 
-
       {/* CARD */}
       {paymentMethod === "card" && (
-
         <div className="space-y-5 border-t pt-6">
 
           <h3 className="font-semibold text-gray-800">
@@ -191,13 +249,10 @@ const PaymentMethod = ({
           </div>
 
         </div>
-
       )}
-
 
       {/* UPI */}
       {paymentMethod === "upi" && (
-
         <div className="border-t pt-6">
 
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -207,19 +262,18 @@ const PaymentMethod = ({
           <input
             type="text"
             value={upi}
-            onChange={(e) => setUpi(e.target.value)}
+            onChange={(e) =>
+              setUpi(e.target.value)
+            }
             placeholder="example@upi"
             className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
           />
 
         </div>
-
       )}
 
-
-      {/* BANK */}
+      {/* NET BANKING */}
       {paymentMethod === "netbanking" && (
-
         <div className="border-t pt-6">
 
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -228,7 +282,9 @@ const PaymentMethod = ({
 
           <select
             value={bank}
-            onChange={(e) => setBank(e.target.value)}
+            onChange={(e) =>
+              setBank(e.target.value)
+            }
             className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
           >
 
@@ -259,16 +315,41 @@ const PaymentMethod = ({
           </select>
 
         </div>
-
       )}
 
+      {/* CASH */}
+      {paymentMethod === "cash" && (
+        <div className="border-t pt-6">
 
-      {/* PAY */}
+          <div className="bg-green-50 border border-green-200 rounded-lg p-5">
+
+            <h3 className="font-semibold text-gray-800 mb-2">
+              Pay via Cash
+            </h3>
+
+            <p className="text-sm text-gray-600">
+              You can pay ₹{totalPrice} in cash at the
+              boarding point before your journey.
+            </p>
+
+            <p className="text-sm text-gray-500 mt-2">
+              Please make sure to carry the required
+              amount with you.
+            </p>
+
+          </div>
+
+        </div>
+      )}
+
+      {/* PAY / CONFIRM BUTTON */}
       <button
         onClick={handlePayment}
         className="w-full mt-8 bg-green-600 hover:bg-green-700 text-white py-4 rounded-lg font-semibold"
       >
-        Pay ₹{totalPrice}
+        {paymentMethod === "cash"
+          ? `Confirm Booking • ₹${totalPrice}`
+          : `Pay ₹${totalPrice}`}
       </button>
 
     </div>

@@ -1,80 +1,83 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../Components/Navbar";
+import Footer from "../Components/Footer";
+import { getBookedSeats } from "../utils/seatAvailability";
 
 const SeatSelection = () => {
-
   const location = useLocation();
   const navigate = useNavigate();
 
   const {
     bus,
-    searchData,
+    searchData = {},
   } = location.state || {};
-
-
-  const seats = Array.from(
-    { length: 32 },
-    (_, index) => index + 1
-  );
-
-
-  const bookedSeats = [3, 7, 12, 18, 25, 30];
-
 
   const [selectedSeats, setSelectedSeats] = useState([]);
 
+  /*
+    Total number of seats in the bus.
 
-  const toggleSeat = (seat) => {
+    You can change this to 36, 40, 45, etc.
+    according to your bus layout.
+  */
+  const totalSeats = 40;
 
-    if (bookedSeats.includes(seat)) {
+  /*
+    Get already booked seats from localStorage.
+  */
+  const bookedSeats = useMemo(() => {
+    return getBookedSeats(bus, searchData);
+  }, [bus, searchData]);
+
+  /*
+    Price comes from the selected bus.
+  */
+  const pricePerSeat = bus?.price || 850;
+
+  /*
+    Generate seats 1 - 40.
+  */
+  const seats = Array.from(
+    { length: totalSeats },
+    (_, index) => index + 1
+  );
+
+  /*
+    Select / unselect a seat.
+  */
+  const handleSeatClick = (seatNumber) => {
+    // Don't allow booked seats
+    if (bookedSeats.includes(seatNumber)) {
       return;
     }
 
-
-    if (selectedSeats.includes(seat)) {
-
-      setSelectedSeats(
-        selectedSeats.filter(
-          (item) => item !== seat
-        )
-      );
-
-    } else {
-
-      if (selectedSeats.length >= 6) {
-
-        alert("You can select maximum 6 seats.");
-
-        return;
+    setSelectedSeats((previousSeats) => {
+      if (previousSeats.includes(seatNumber)) {
+        return previousSeats.filter(
+          (seat) => seat !== seatNumber
+        );
       }
 
-      setSelectedSeats([
-        ...selectedSeats,
-        seat,
-      ]);
-
-    }
-
+      return [
+        ...previousSeats,
+        seatNumber,
+      ];
+    });
   };
 
-
-  const totalPrice =
-    selectedSeats.length *
-    Number(bus?.price || 0);
-
-
+  /*
+    Continue to passenger details.
+  */
   const handleContinue = () => {
-
     if (selectedSeats.length === 0) {
-
       alert("Please select at least one seat.");
-
       return;
     }
 
+    const totalPrice =
+      selectedSeats.length * pricePerSeat;
 
     navigate("/passenger-details", {
       state: {
@@ -84,26 +87,30 @@ const SeatSelection = () => {
         searchData,
       },
     });
-
   };
 
-
+  /*
+    If bus information is missing.
+  */
   if (!bus) {
-
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
 
-        <div className="text-center">
+        <div className="bg-white rounded-xl shadow-md p-8 text-center">
 
-          <h2 className="text-2xl font-bold">
+          <h2 className="text-2xl font-bold text-gray-800">
             Bus information not found
           </h2>
 
+          <p className="text-gray-500 mt-2">
+            Please select a bus before choosing a seat.
+          </p>
+
           <button
-            onClick={() => navigate("/search-results")}
-            className="mt-5 bg-green-600 text-white px-6 py-3 rounded-lg"
+            onClick={() => navigate("/")}
+            className="mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
           >
-            Back to Search
+            Go Home
           </button>
 
         </div>
@@ -112,130 +119,247 @@ const SeatSelection = () => {
     );
   }
 
-
   return (
     <div className="min-h-screen bg-gray-100">
 
       <Navbar />
 
+      <div className="max-w-6xl mx-auto px-6 py-10">
 
-      <div className="max-w-7xl mx-auto px-6 py-10">
+        {/* HEADER */}
+        <div className="mb-8">
 
-        <h1 className="text-3xl font-bold text-[#1e2a40]">
-          Select Your Seats
-        </h1>
+          <button
+            onClick={() => navigate(-1)}
+            className="text-green-600 font-medium mb-4"
+          >
+            ← Back
+          </button>
 
-        <p className="text-gray-500 mt-2">
-          {bus.name} • {bus.departure} → {bus.arrival}
-        </p>
+          <h1 className="text-3xl font-bold text-[#1e2a40]">
+            Select Your Seats
+          </h1>
 
+          <p className="text-gray-500 mt-2">
+            {bus.name}
+          </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+          <p className="text-gray-500">
+            {bus.from ||
+              searchData.from ||
+              "Delhi"}
+            {" → "}
+            {bus.to ||
+              searchData.to ||
+              "Jaipur"}
+          </p>
 
+          {searchData.date && (
+            <p className="text-gray-500">
+              Journey Date: {searchData.date}
+            </p>
+          )}
 
-          {/* SEATS */}
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-md p-6">
+        </div>
 
-            <div className="flex justify-between mb-8 text-sm">
+        {/* BUS + SUMMARY */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+          {/* SEAT AREA */}
+          <div className="lg:col-span-2 bg-white rounded-xl shadow-md p-6 md:p-8">
+
+            <div className="flex justify-between items-center mb-8">
+
+              <div>
+                <h2 className="text-xl font-bold text-[#1e2a40]">
+                  {bus.name}
+                </h2>
+
+                <p className="text-gray-500 text-sm mt-1">
+                  ₹{pricePerSeat} per seat
+                </p>
+              </div>
+
+              {/* DRIVER */}
+              <div className="border border-gray-300 rounded-lg px-5 py-3 text-sm font-semibold text-gray-600">
+                DRIVER
+              </div>
+
+            </div>
+
+            {/* LEGEND */}
+            <div className="flex flex-wrap gap-6 mb-8 text-sm">
 
               <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded bg-gray-300"></span>
+                <span className="w-5 h-5 bg-white border-2 border-gray-300 rounded"></span>
                 Available
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded bg-green-600"></span>
+                <span className="w-5 h-5 bg-green-600 rounded"></span>
                 Selected
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded bg-red-400"></span>
+                <span className="w-5 h-5 bg-gray-400 rounded"></span>
                 Booked
               </div>
 
             </div>
 
+            {/* SEATS */}
+            <div className="border-t pt-8">
 
-            {/* DRIVER */}
-            <div className="border rounded-lg p-4 mb-8 text-right">
-              🚌 Driver
+              <div className="max-w-md mx-auto">
+
+                <div className="grid grid-cols-4 gap-4">
+
+                  {seats.map((seatNumber) => {
+
+                    const isBooked =
+                      bookedSeats.includes(
+                        seatNumber
+                      );
+
+                    const isSelected =
+                      selectedSeats.includes(
+                        seatNumber
+                      );
+
+                    return (
+                      <button
+                        key={seatNumber}
+                        type="button"
+                        disabled={isBooked}
+                        onClick={() =>
+                          handleSeatClick(
+                            seatNumber
+                          )
+                        }
+                        className={`
+                          h-14 rounded-lg border-2
+                          font-semibold transition
+                          ${
+                            isBooked
+                              ? "bg-gray-400 border-gray-400 text-white cursor-not-allowed"
+                              : isSelected
+                              ? "bg-green-600 border-green-600 text-white"
+                              : "bg-white border-gray-300 text-gray-700 hover:border-green-600 hover:text-green-600"
+                          }
+                        `}
+                      >
+                        {seatNumber}
+                      </button>
+                    );
+                  })}
+
+                </div>
+
+              </div>
+
             </div>
 
+            {/* BOOKED INFORMATION */}
+            {bookedSeats.length > 0 && (
+              <div className="mt-8 bg-gray-50 border border-gray-200 rounded-lg p-4">
 
-            {/* SEAT GRID */}
-            <div className="grid grid-cols-4 gap-4 max-w-md mx-auto">
+                <p className="text-sm text-gray-600">
+                  <span className="font-semibold">
+                    Already booked:
+                  </span>{" "}
+                  {bookedSeats
+                    .sort((a, b) => a - b)
+                    .join(", ")}
+                </p>
 
-              {seats.map((seat) => {
-
-                const isBooked =
-                  bookedSeats.includes(seat);
-
-                const isSelected =
-                  selectedSeats.includes(seat);
-
-
-                return (
-                  <button
-                    key={seat}
-                    disabled={isBooked}
-                    onClick={() => toggleSeat(seat)}
-                    className={`
-                      h-14 rounded-lg font-semibold border
-                      ${
-                        isBooked
-                          ? "bg-red-400 text-white cursor-not-allowed"
-                          : isSelected
-                          ? "bg-green-600 text-white border-green-600"
-                          : "bg-gray-100 hover:bg-green-100 border-gray-300"
-                      }
-                    `}
-                  >
-                    {seat}
-                  </button>
-                );
-
-              })}
-
-            </div>
+              </div>
+            )}
 
           </div>
-
 
           {/* SUMMARY */}
           <div className="bg-white rounded-xl shadow-md p-6 h-fit">
 
-            <h2 className="text-xl font-bold text-[#1e2a40] mb-5">
+            <h2 className="text-xl font-bold text-[#1e2a40] mb-6">
               Booking Summary
             </h2>
 
+            {/* BUS */}
+            <div className="border-b pb-5">
 
-            <div className="space-y-4">
+              <p className="text-gray-500 text-sm">
+                Bus
+              </p>
+
+              <p className="font-semibold mt-1">
+                {bus.name}
+              </p>
+
+            </div>
+
+            {/* ROUTE */}
+            <div className="border-b py-5">
+
+              <p className="text-gray-500 text-sm">
+                Route
+              </p>
+
+              <p className="font-semibold mt-1">
+                {bus.from ||
+                  searchData.from ||
+                  "Delhi"}
+                {" → "}
+                {bus.to ||
+                  searchData.to ||
+                  "Jaipur"}
+              </p>
+
+            </div>
+
+            {/* DATE */}
+            <div className="border-b py-5">
+
+              <p className="text-gray-500 text-sm">
+                Journey Date
+              </p>
+
+              <p className="font-semibold mt-1">
+                {searchData.date ||
+                  "Not available"}
+              </p>
+
+            </div>
+
+            {/* SELECTED SEATS */}
+            <div className="border-b py-5">
+
+              <p className="text-gray-500 text-sm">
+                Selected Seats
+              </p>
+
+              {selectedSeats.length > 0 ? (
+
+                <p className="font-semibold mt-1">
+                  {selectedSeats
+                    .sort((a, b) => a - b)
+                    .join(", ")}
+                </p>
+
+              ) : (
+
+                <p className="text-gray-400 mt-1">
+                  No seats selected
+                </p>
+
+              )}
+
+            </div>
+
+            {/* PRICE */}
+            <div className="border-b py-5">
 
               <div className="flex justify-between">
-                <span className="text-gray-500">
-                  Bus
-                </span>
 
-                <span className="font-semibold">
-                  {bus.name}
-                </span>
-              </div>
-
-
-              <div className="flex justify-between">
-                <span className="text-gray-500">
-                  Route
-                </span>
-
-                <span className="font-semibold">
-                  {bus.from || searchData?.from || "Delhi"}
-                  {" → "}
-                  {bus.to || searchData?.to || "Jaipur"}
-                </span>
-              </div>
-
-
-              <div className="flex justify-between">
                 <span className="text-gray-500">
                   Seats
                 </span>
@@ -243,29 +367,53 @@ const SeatSelection = () => {
                 <span className="font-semibold">
                   {selectedSeats.length}
                 </span>
+
               </div>
 
+              <div className="flex justify-between mt-2">
 
-              <div className="border-t pt-4 flex justify-between">
-
-                <span className="font-bold">
-                  Total
+                <span className="text-gray-500">
+                  Price / Seat
                 </span>
 
-                <span className="text-2xl font-bold text-green-600">
-                  ₹{totalPrice}
+                <span className="font-semibold">
+                  ₹{pricePerSeat}
                 </span>
 
               </div>
 
             </div>
 
+            {/* TOTAL */}
+            <div className="flex justify-between items-center pt-5">
 
+              <span className="text-xl font-bold">
+                Total
+              </span>
+
+              <span className="text-2xl font-bold text-green-600">
+                ₹
+                {selectedSeats.length *
+                  pricePerSeat}
+              </span>
+
+            </div>
+
+            {/* CONTINUE */}
             <button
               onClick={handleContinue}
-              className="w-full mt-7 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold"
+              disabled={selectedSeats.length === 0}
+              className={`
+                w-full mt-6 py-4 rounded-lg
+                font-semibold transition
+                ${
+                  selectedSeats.length === 0
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700 text-white"
+                }
+              `}
             >
-              Continue
+              CONTINUE TO PASSENGER DETAILS
             </button>
 
           </div>
@@ -273,7 +421,6 @@ const SeatSelection = () => {
         </div>
 
       </div>
-
 
       <Footer />
 

@@ -8,13 +8,17 @@ import "./index.css";
 import { LanguageProvider } from "./context/LanguageContext";
 import { AuthProvider } from "./context/AuthContext";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+ReactDOM.createRoot(
+  document.getElementById("root")
+).render(
   <BrowserRouter>
 
     <LanguageProvider>
 
       <AuthProvider>
+
         <App />
+
       </AuthProvider>
 
     </LanguageProvider>

@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import BusCard from "../components/BusCard";
+import Navbar from "../Components/Navbar";
+import Footer from "../Components/Footer";
+import BusCard from "../Components/BusCard";
 
 const SearchResult = () => {
 

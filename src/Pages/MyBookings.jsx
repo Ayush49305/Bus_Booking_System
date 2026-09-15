@@ -1,82 +1,131 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../Components/Navbar";
+import Footer from "../Components/Footer";
+import { useAuth } from "../context/AuthContext";
 
 const MyBookings = () => {
-
   const navigate = useNavigate();
 
-  const [bookings, setBookings] =
-    useState([]);
+  const { user } = useAuth();
 
+  const [bookings, setBookings] = useState([]);
 
   const loadBookings = () => {
-
     const data =
       JSON.parse(
         localStorage.getItem("greenBusBookings")
       ) || [];
 
-    setBookings(data);
+    // If user is not logged in
+    if (!user) {
+      setBookings([]);
+      return;
+    }
 
+    // Show only current user's bookings
+    const userBookings = data.filter(
+      (booking) =>
+        booking.userEmail?.toLowerCase() ===
+        user.email?.toLowerCase()
+    );
+
+    setBookings(userBookings);
   };
 
-
   useEffect(() => {
-
     loadBookings();
-
-  }, []);
-
+  }, [user]);
 
   const cancelBooking = (bookingId) => {
-
-    const confirmCancel =
-      window.confirm(
-        "Are you sure you want to cancel this booking?"
-      );
-
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this booking?"
+    );
 
     if (!confirmCancel) {
       return;
     }
 
+    const allBookings =
+      JSON.parse(
+        localStorage.getItem("greenBusBookings")
+      ) || [];
 
-    const updatedBookings =
-      bookings.map((booking) => {
-
+    const updatedAllBookings = allBookings.map(
+      (booking) => {
         if (booking.bookingId === bookingId) {
-
           return {
             ...booking,
             status: "Cancelled",
           };
-
         }
 
         return booking;
-
-      });
-
-
-    setBookings(updatedBookings);
-
-
-    localStorage.setItem(
-      "greenBusBookings",
-      JSON.stringify(updatedBookings)
+      }
     );
 
+    // Update localStorage
+    localStorage.setItem(
+      "greenBusBookings",
+      JSON.stringify(updatedAllBookings)
+    );
+
+    // Update only current user's bookings
+    const updatedUserBookings =
+      updatedAllBookings.filter(
+        (booking) =>
+          booking.userEmail?.toLowerCase() ===
+          user?.email?.toLowerCase()
+      );
+
+    setBookings(updatedUserBookings);
   };
 
+  // User not logged in
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-100">
+
+        <Navbar />
+
+        <div className="max-w-6xl mx-auto px-6 py-20">
+
+          <div className="bg-white rounded-xl shadow-md p-12 text-center">
+
+            <div className="text-5xl mb-5">
+              🔐
+            </div>
+
+            <h2 className="text-2xl font-bold">
+              Please Sign In
+            </h2>
+
+            <p className="text-gray-500 mt-2">
+              Please sign in to view your bookings.
+            </p>
+
+            <Link
+              to="/login"
+              className="inline-block mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+            >
+              Sign In
+            </Link>
+
+          </div>
+
+        </div>
+
+        <Footer />
+
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
 
       <Navbar />
-
 
       <div className="max-w-6xl mx-auto px-6 py-10">
 
@@ -87,7 +136,6 @@ const MyBookings = () => {
         <p className="text-gray-500 mt-2 mb-8">
           View and manage your bus bookings.
         </p>
-
 
         {bookings.length === 0 ? (
 
@@ -107,7 +155,7 @@ const MyBookings = () => {
 
             <Link
               to="/"
-              className="inline-block mt-6 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold"
+              className="inline-block mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
             >
               Book a Ticket
             </Link>
@@ -125,6 +173,7 @@ const MyBookings = () => {
                 className="bg-white rounded-xl shadow-md p-6"
               >
 
+                {/* HEADER */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
 
                   <div>
@@ -145,7 +194,6 @@ const MyBookings = () => {
 
                   </div>
 
-
                   <span
                     className={`px-4 py-2 rounded-lg font-semibold w-fit ${
                       booking.status === "Cancelled"
@@ -158,7 +206,7 @@ const MyBookings = () => {
 
                 </div>
 
-
+                {/* BOOKING INFORMATION */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-6 border-t pt-6">
 
                   <div>
@@ -173,7 +221,6 @@ const MyBookings = () => {
 
                   </div>
 
-
                   <div>
 
                     <p className="text-sm text-gray-500">
@@ -186,7 +233,6 @@ const MyBookings = () => {
 
                   </div>
 
-
                   <div>
 
                     <p className="text-sm text-gray-500">
@@ -198,7 +244,6 @@ const MyBookings = () => {
                     </p>
 
                   </div>
-
 
                   <div>
 
@@ -214,7 +259,32 @@ const MyBookings = () => {
 
                 </div>
 
+                {/* DATE/TIME */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
 
+                  <div>
+                    <p className="text-sm text-gray-500">
+                      Booking Date
+                    </p>
+
+                    <p className="font-semibold">
+                      {booking.bookingDate}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500">
+                      Booking Time
+                    </p>
+
+                    <p className="font-semibold">
+                      {booking.bookingTime}
+                    </p>
+                  </div>
+
+                </div>
+
+                {/* BUTTONS */}
                 <div className="flex flex-col md:flex-row gap-3 mt-6">
 
                   <button
@@ -229,7 +299,6 @@ const MyBookings = () => {
                   >
                     View Details
                   </button>
-
 
                   {booking.status !== "Cancelled" && (
 
@@ -257,7 +326,6 @@ const MyBookings = () => {
         )}
 
       </div>
-
 
       <Footer />
 

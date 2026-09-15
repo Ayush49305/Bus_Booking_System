@@ -1,19 +1,22 @@
-import React from 'react'
-import 'remixicon/fonts/remixicon.css'
-import { Link } from 'react-router-dom'
-import { useLanguage } from '../context/LanguageContext'
-import { useAuth } from '../context/AuthContext'
-import busLogo from '../assets/bus.png'
+import React from "react";
+import "remixicon/fonts/remixicon.css";
+import { Link } from "react-router-dom";
+
+import { useLanguage } from "../context/LanguageContext";
+import { useAuth } from "../context/AuthContext";
+
+import busLogo from "../assets/bus.png";
 
 const Navbar = () => {
 
-  const { language, changeLanguage, t } = useLanguage()
+  const { language, changeLanguage, t } = useLanguage();
 
-  const { user, logout } = useAuth()
+  const { user, logout } = useAuth();
 
   return (
     <nav className="h-25 flex items-center justify-between px-6 md:px-12 bg-white shadow-sm relative z-20">
 
+      {/* Logo */}
       <div className="flex items-center gap-1">
 
         <Link to="/">
@@ -33,6 +36,8 @@ const Navbar = () => {
 
       </div>
 
+
+      {/* Navigation */}
       <div className="hidden md:flex items-center gap-7 text-lg">
 
         <Link
@@ -72,6 +77,8 @@ const Navbar = () => {
 
       </div>
 
+
+      {/* Right Side */}
       <div className="hidden lg:flex items-center gap-5">
 
         {/* Language */}
@@ -89,9 +96,10 @@ const Navbar = () => {
           </option>
         </select>
 
+
+        {/* Login / Signup */}
         {!user ? (
           <>
-            {/* Sign In */}
             <Link
               to="/login"
               className="text-green-600"
@@ -99,7 +107,6 @@ const Navbar = () => {
               ↪ {t.signIn}
             </Link>
 
-            {/* Sign Up */}
             <Link
               to="/signup"
               className="text-green-600"
@@ -109,12 +116,10 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            {/* User Name */}
             <span className="text-green-600">
               👤 {user.name}
             </span>
 
-            {/* Logout */}
             <button
               onClick={logout}
               className="text-green-600"
@@ -127,7 +132,7 @@ const Navbar = () => {
       </div>
 
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
