@@ -1,11 +1,17 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
+import { useAuth } from "../context/AuthContext";
 
 const PassengerDetails = () => {
-
   const location = useLocation();
   const navigate = useNavigate();
 
+  const { user } = useAuth();
 
   const {
     bus,
@@ -14,8 +20,10 @@ const PassengerDetails = () => {
     searchData,
   } = location.state || {};
 
-
-  const [passengers, setPassengers] = useState(
+  const [
+    passengers,
+    setPassengers,
+  ] = useState(
     selectedSeats.map((seat) => ({
       seat,
       name: "",
@@ -26,34 +34,41 @@ const PassengerDetails = () => {
     }))
   );
 
-
   const handleChange = (
     index,
     field,
     value
   ) => {
-
-    const updatedPassengers = [
+    const updated = [
       ...passengers,
     ];
 
-    updatedPassengers[index] = {
-      ...updatedPassengers[index],
+    updated[index] = {
+      ...updated[index],
       [field]: value,
     };
 
-    setPassengers(updatedPassengers);
-
+    setPassengers(updated);
   };
 
-
   const handleSubmit = (e) => {
-
     e.preventDefault();
 
+    if (!user) {
+      navigate("/login", {
+        state: {
+          from: "/passenger-details",
+          bus,
+          selectedSeats,
+          totalPrice,
+          searchData,
+        },
+      });
+
+      return;
+    }
 
     for (const passenger of passengers) {
-
       if (
         !passenger.name.trim() ||
         !passenger.age ||
@@ -61,7 +76,6 @@ const PassengerDetails = () => {
         !passenger.phone.trim() ||
         !passenger.email.trim()
       ) {
-
         alert(
           `Please fill all details for Seat ${passenger.seat}`
         );
@@ -69,12 +83,9 @@ const PassengerDetails = () => {
         return;
       }
 
-
       if (
-        passenger.phone.length !== 10 ||
-        isNaN(passenger.phone)
+        passenger.phone.length !== 10
       ) {
-
         alert(
           `Please enter a valid 10-digit phone number for Seat ${passenger.seat}`
         );
@@ -82,8 +93,29 @@ const PassengerDetails = () => {
         return;
       }
 
-    }
+      if (
+        !/^\S+@\S+\.\S+$/.test(
+          passenger.email
+        )
+      ) {
+        alert(
+          `Please enter a valid email for Seat ${passenger.seat}`
+        );
 
+        return;
+      }
+
+      if (
+        Number(passenger.age) < 1 ||
+        Number(passenger.age) > 120
+      ) {
+        alert(
+          `Please enter a valid age for Seat ${passenger.seat}`
+        );
+
+        return;
+      }
+    }
 
     navigate("/payment", {
       state: {
@@ -94,23 +126,27 @@ const PassengerDetails = () => {
         searchData,
       },
     });
-
   };
 
-
-  if (!bus || selectedSeats.length === 0) {
-
+  if (
+    !bus ||
+    selectedSeats.length === 0
+  ) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
 
-        <div className="text-center">
+        <div className="text-center bg-white p-8 rounded-xl shadow-md">
 
           <h2 className="text-2xl font-bold">
             Booking information not found
           </h2>
 
           <button
-            onClick={() => navigate("/search-results")}
+            onClick={() =>
+              navigate(
+                "/search-results"
+              )
+            }
             className="mt-5 bg-green-600 text-white px-6 py-3 rounded-lg"
           >
             Back to Search
@@ -122,6 +158,20 @@ const PassengerDetails = () => {
     );
   }
 
+  if (!user) {
+    navigate("/login", {
+      replace: true,
+      state: {
+        from: "/passenger-details",
+        bus,
+        selectedSeats,
+        totalPrice,
+        searchData,
+      },
+    });
+
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -142,7 +192,6 @@ const PassengerDetails = () => {
 
       </div>
 
-
       <div className="max-w-6xl mx-auto px-6 py-10">
 
         <form onSubmit={handleSubmit}>
@@ -160,17 +209,17 @@ const PassengerDetails = () => {
                   <div className="flex justify-between items-center mb-6">
 
                     <h2 className="text-xl font-bold text-[#1e2a40]">
-                      Passenger {index + 1}
+                      Passenger{" "}
+                      {index + 1}
                     </h2>
 
                     <span className="bg-green-100 text-green-700 px-4 py-2 rounded-lg font-semibold">
-                      Seat {passenger.seat}
+                      Seat{" "}
+                      {passenger.seat}
                     </span>
 
                   </div>
 
-
-                  {/* NAME */}
                   <div className="mb-5">
 
                     <label className="block text-gray-700 mb-2">
@@ -180,7 +229,9 @@ const PassengerDetails = () => {
                     <input
                       type="text"
                       required
-                      value={passenger.name}
+                      value={
+                        passenger.name
+                      }
                       onChange={(e) =>
                         handleChange(
                           index,
@@ -194,8 +245,6 @@ const PassengerDetails = () => {
 
                   </div>
 
-
-                  {/* AGE + GENDER */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
                     <div>
@@ -209,7 +258,9 @@ const PassengerDetails = () => {
                         min="1"
                         max="120"
                         required
-                        value={passenger.age}
+                        value={
+                          passenger.age
+                        }
                         onChange={(e) =>
                           handleChange(
                             index,
@@ -223,7 +274,6 @@ const PassengerDetails = () => {
 
                     </div>
 
-
                     <div>
 
                       <label className="block text-gray-700 mb-2">
@@ -232,7 +282,9 @@ const PassengerDetails = () => {
 
                       <select
                         required
-                        value={passenger.gender}
+                        value={
+                          passenger.gender
+                        }
                         onChange={(e) =>
                           handleChange(
                             index,
@@ -265,8 +317,6 @@ const PassengerDetails = () => {
 
                   </div>
 
-
-                  {/* PHONE */}
                   <div className="mt-5">
 
                     <label className="block text-gray-700 mb-2">
@@ -277,12 +327,17 @@ const PassengerDetails = () => {
                       type="tel"
                       required
                       maxLength="10"
-                      value={passenger.phone}
+                      value={
+                        passenger.phone
+                      }
                       onChange={(e) =>
                         handleChange(
                           index,
                           "phone",
-                          e.target.value.replace(/\D/g, "")
+                          e.target.value.replace(
+                            /\D/g,
+                            ""
+                          )
                         )
                       }
                       placeholder="10-digit phone number"
@@ -291,8 +346,6 @@ const PassengerDetails = () => {
 
                   </div>
 
-
-                  {/* EMAIL */}
                   <div className="mt-5">
 
                     <label className="block text-gray-700 mb-2">
@@ -302,7 +355,9 @@ const PassengerDetails = () => {
                     <input
                       type="email"
                       required
-                      value={passenger.email}
+                      value={
+                        passenger.email
+                      }
                       onChange={(e) =>
                         handleChange(
                           index,
@@ -317,21 +372,18 @@ const PassengerDetails = () => {
                   </div>
 
                 </div>
-
               )
             )}
 
           </div>
 
-
-          {/* SUMMARY */}
           <div className="bg-white rounded-xl shadow-md p-6 mt-8">
 
             <h2 className="text-xl font-bold text-[#1e2a40]">
               Booking Summary
             </h2>
 
-            <div className="border-b border-gray-300 my-5"></div>
+            <div className="border-b my-5"></div>
 
             <p className="text-gray-500 text-sm">
               Bus
@@ -346,7 +398,9 @@ const PassengerDetails = () => {
             </p>
 
             <p className="font-semibold mb-4">
-              {selectedSeats.join(", ")}
+              {selectedSeats.join(
+                ", "
+              )}
             </p>
 
             <p className="text-gray-500 text-sm">
@@ -359,13 +413,14 @@ const PassengerDetails = () => {
 
           </div>
 
-
           <div className="flex gap-4 mt-8">
 
             <button
               type="button"
-              onClick={() => navigate(-1)}
-              className="flex-1 border border-gray-300 bg-white py-3 rounded-lg font-semibold"
+              onClick={() =>
+                navigate(-1)
+              }
+              className="flex-1 border bg-white py-3 rounded-lg font-semibold"
             >
               Back
             </button>

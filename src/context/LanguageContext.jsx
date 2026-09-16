@@ -1,4 +1,8 @@
-import React, { createContext, useContext, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+} from "react";
 
 const LanguageContext = createContext();
 
@@ -11,12 +15,14 @@ const translations = {
     contact: "Contact",
     signIn: "Sign In",
     signUp: "Sign Up",
+    signOut: "Sign Out",
     bookTicket: "Book Your Ticket",
     from: "From",
     to: "To",
     journeyDate: "Journey Date",
     departureCity: "Enter departure city",
-    destinationCity: "Enter destination city",
+    destinationCity:
+      "Enter destination city",
     searchBuses: "SEARCH BUSES",
   },
 
@@ -28,24 +34,35 @@ const translations = {
     contact: "संपर्क",
     signIn: "साइन इन",
     signUp: "साइन अप",
+    signOut: "साइन आउट",
     bookTicket: "अपना टिकट बुक करें",
     from: "से",
     to: "तक",
     journeyDate: "यात्रा की तारीख",
-    departureCity: "प्रस्थान शहर दर्ज करें",
-    destinationCity: "गंतव्य शहर दर्ज करें",
+    departureCity:
+      "प्रस्थान शहर दर्ज करें",
+    destinationCity:
+      "गंतव्य शहर दर्ज करें",
     searchBuses: "बस खोजें",
   },
 };
 
-export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState(
-    localStorage.getItem("language") || "English"
-  );
+export const LanguageProvider = ({
+  children,
+}) => {
+  const [language, setLanguage] =
+    useState(
+      localStorage.getItem("language") ||
+        "English"
+    );
 
   const changeLanguage = (newLanguage) => {
     setLanguage(newLanguage);
-    localStorage.setItem("language", newLanguage);
+
+    localStorage.setItem(
+      "language",
+      newLanguage
+    );
   };
 
   return (

@@ -21,55 +21,48 @@ const App = () => {
   return (
     <Routes>
 
-      {/* HOME */}
       <Route
         path="/"
         element={<Home />}
       />
 
-      {/* BUS SEARCH */}
       <Route
         path="/search-results"
         element={<SearchResults />}
       />
 
-      {/* SEAT SELECTION */}
       <Route
         path="/seat-selection"
         element={<SeatSelection />}
       />
 
-      {/* PASSENGER DETAILS */}
       <Route
         path="/passenger-details"
         element={<PassengerDetails />}
       />
 
-      {/* PAYMENT */}
       <Route
         path="/payment"
         element={<Payment />}
       />
 
-      {/* BOOKING CONFIRMATION */}
       <Route
         path="/booking-confirmation"
-        element={<BookingConfirmation />}
+        element={
+          <BookingConfirmation />
+        }
       />
 
-      {/* MY BOOKINGS */}
       <Route
         path="/my-bookings"
         element={<MyBookings />}
       />
 
-      {/* BOOKING DETAILS */}
       <Route
         path="/booking-details"
         element={<BookingDetails />}
       />
 
-      {/* OTHER PAGES */}
       <Route
         path="/about"
         element={<About />}
@@ -85,7 +78,6 @@ const App = () => {
         element={<Contact />}
       />
 
-      {/* AUTH */}
       <Route
         path="/login"
         element={<Login />}

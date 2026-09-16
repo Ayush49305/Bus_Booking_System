@@ -1,44 +1,27 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-} from "react";
+import React, { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-
   const [user, setUser] = useState(() => {
-
-    const savedUser =
-      localStorage.getItem("greenBusUser");
+    const savedUser = localStorage.getItem("greenBusUser");
 
     return savedUser
       ? JSON.parse(savedUser)
       : null;
   });
 
-
-  // SIGNUP
-  const signup = (
-    name,
-    email,
-    password
-  ) => {
-
-    const existingUser =
+  const signup = (name, email, password) => {
+    const existingAccount =
       localStorage.getItem("greenBusAccount");
 
-    if (existingUser) {
-
-      const account =
-        JSON.parse(existingUser);
+    if (existingAccount) {
+      const account = JSON.parse(existingAccount);
 
       if (
         account.email.toLowerCase() ===
         email.toLowerCase()
       ) {
-
         return {
           success: false,
           message:
@@ -47,40 +30,28 @@ export const AuthProvider = ({ children }) => {
       }
     }
 
-
     const account = {
       name,
       email,
       password,
     };
 
-
     localStorage.setItem(
       "greenBusAccount",
       JSON.stringify(account)
     );
 
-
     return {
       success: true,
-      message:
-        "Account created successfully.",
+      message: "Account created successfully.",
     };
   };
 
-
-  // LOGIN
-  const login = (
-    email,
-    password
-  ) => {
-
+  const login = (email, password) => {
     const savedAccount =
       localStorage.getItem("greenBusAccount");
 
-
     if (!savedAccount) {
-
       return {
         success: false,
         message:
@@ -88,31 +59,24 @@ export const AuthProvider = ({ children }) => {
       };
     }
 
-
-    const account =
-      JSON.parse(savedAccount);
-
+    const account = JSON.parse(savedAccount);
 
     if (
       account.email.toLowerCase() ===
         email.toLowerCase() &&
       account.password === password
     ) {
-
       const loggedInUser = {
         name: account.name,
         email: account.email,
       };
 
-
       setUser(loggedInUser);
-
 
       localStorage.setItem(
         "greenBusUser",
         JSON.stringify(loggedInUser)
       );
-
 
       return {
         success: true,
@@ -120,25 +84,16 @@ export const AuthProvider = ({ children }) => {
       };
     }
 
-
     return {
       success: false,
-      message:
-        "Invalid email or password.",
+      message: "Invalid email or password.",
     };
   };
 
-
-  // LOGOUT
   const logout = () => {
-
     setUser(null);
-
-    localStorage.removeItem(
-      "greenBusUser"
-    );
+    localStorage.removeItem("greenBusUser");
   };
-
 
   return (
     <AuthContext.Provider
@@ -153,7 +108,6 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
 
 export const useAuth = () => {
   return useContext(AuthContext);

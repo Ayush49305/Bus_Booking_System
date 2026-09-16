@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, {
+  useState,
+} from "react";
+
 import {
   Link,
   useLocation,
@@ -14,51 +17,77 @@ const Signup = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { signup } = useAuth();
+  const { signup } =
+    useAuth();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [name, setName] =
+    useState("");
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] =
+    useState("");
 
-  const [error, setError] = useState("");
+  const [password, setPassword] =
+    useState("");
+
+  const [
+    confirmPassword,
+    setConfirmPassword,
+  ] = useState("");
+
+  const [error, setError] =
+    useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     setError("");
 
-    // Check empty fields
     if (
       !name ||
       !email ||
       !password ||
       !confirmPassword
     ) {
-      setError("Please fill all the fields.");
+      setError(
+        "Please fill all the fields."
+      );
+
       return;
     }
 
-    // Email validation
-    if (!email.includes("@")) {
-      setError("Please enter a valid email address.");
+    if (
+      !/^\S+@\S+\.\S+$/.test(
+        email
+      )
+    ) {
+      setError(
+        "Please enter a valid email address."
+      );
+
       return;
     }
 
-    // Password validation
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+    if (
+      password.length < 6
+    ) {
+      setError(
+        "Password must be at least 6 characters."
+      );
+
       return;
     }
 
-    // Confirm password
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+    if (
+      password !==
+      confirmPassword
+    ) {
+      setError(
+        "Passwords do not match."
+      );
+
       return;
     }
 
-    // Create account
     const result = signup(
       name,
       email,
@@ -66,20 +95,20 @@ const Signup = () => {
     );
 
     if (!result.success) {
-      setError(result.message);
+      setError(
+        result.message
+      );
+
       return;
     }
 
-    alert("Account created successfully!");
-
-    /*
-      If user came from booking,
-      send them to Login and preserve
-      the booking information.
-    */
+    alert(
+      "Account created successfully!"
+    );
 
     navigate("/login", {
-      state: location.state,
+      state:
+        location.state,
     });
   };
 
@@ -91,10 +120,9 @@ const Signup = () => {
 
         <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
 
-          {/* TITLE */}
           <div className="text-center mb-8">
 
-            <h1 className="text-3xl font-semibold text-gray-800">
+            <h1 className="text-3xl font-semibold">
               Create Account
             </h1>
 
@@ -104,17 +132,16 @@ const Signup = () => {
 
           </div>
 
-          {/* ERROR */}
           {error && (
             <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg mb-5">
               {error}
             </div>
           )}
 
-          {/* SIGNUP FORM */}
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={handleSubmit}
+          >
 
-            {/* NAME */}
             <div className="mb-5">
 
               <label className="block text-gray-700 mb-2">
@@ -123,17 +150,18 @@ const Signup = () => {
 
               <input
                 type="text"
-                placeholder="Enter your name"
                 value={name}
                 onChange={(e) =>
-                  setName(e.target.value)
+                  setName(
+                    e.target.value
+                  )
                 }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                placeholder="Enter your name"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
               />
 
             </div>
 
-            {/* EMAIL */}
             <div className="mb-5">
 
               <label className="block text-gray-700 mb-2">
@@ -142,17 +170,18 @@ const Signup = () => {
 
               <input
                 type="email"
-                placeholder="Enter your email"
                 value={email}
                 onChange={(e) =>
-                  setEmail(e.target.value)
+                  setEmail(
+                    e.target.value
+                  )
                 }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                placeholder="Enter your email"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
               />
 
             </div>
 
-            {/* PASSWORD */}
             <div className="mb-5">
 
               <label className="block text-gray-700 mb-2">
@@ -161,17 +190,18 @@ const Signup = () => {
 
               <input
                 type="password"
-                placeholder="Create a password"
                 value={password}
                 onChange={(e) =>
-                  setPassword(e.target.value)
+                  setPassword(
+                    e.target.value
+                  )
                 }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                placeholder="Create a password"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
               />
 
             </div>
 
-            {/* CONFIRM PASSWORD */}
             <div className="mb-6">
 
               <label className="block text-gray-700 mb-2">
@@ -180,35 +210,39 @@ const Signup = () => {
 
               <input
                 type="password"
-                placeholder="Confirm your password"
-                value={confirmPassword}
-                onChange={(e) =>
-                  setConfirmPassword(e.target.value)
+                value={
+                  confirmPassword
                 }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                onChange={(e) =>
+                  setConfirmPassword(
+                    e.target.value
+                  )
+                }
+                placeholder="Confirm your password"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
               />
 
             </div>
 
-            {/* CREATE ACCOUNT */}
             <button
               type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition"
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg"
             >
               CREATE ACCOUNT
             </button>
 
           </form>
 
-          {/* LOGIN LINK */}
           <p className="text-center text-gray-600 mt-6">
 
             Already have an account?{" "}
 
             <Link
               to="/login"
-              state={location.state}
-              className="text-green-600 font-semibold hover:underline"
+              state={
+                location.state
+              }
+              className="text-green-600 font-semibold"
             >
               Sign In
             </Link>

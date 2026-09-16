@@ -1,31 +1,33 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+
+import {
+  Link,
+  useLocation,
+} from "react-router-dom";
 
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 
 const BookingDetails = () => {
-  const location = useLocation();
+  const location =
+    useLocation();
 
-  const booking = location.state?.booking;
+  const booking =
+    location.state?.booking;
 
   if (!booking) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
 
-        <div className="text-center bg-white p-8 rounded-xl shadow-md">
+        <div className="bg-white p-8 rounded-xl shadow-md text-center">
 
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="text-2xl font-bold">
             Booking not found
           </h2>
 
-          <p className="text-gray-500 mt-2">
-            The booking information could not be found.
-          </p>
-
           <Link
             to="/my-bookings"
-            className="inline-block mt-5 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+            className="inline-block mt-5 bg-green-600 text-white px-6 py-3 rounded-lg"
           >
             My Bookings
           </Link>
@@ -56,16 +58,14 @@ const BookingDetails = () => {
 
       <div className="max-w-5xl mx-auto px-6 py-10">
 
-        {/* BACK BUTTON */}
         <Link
           to="/my-bookings"
-          className="inline-block text-green-600 font-medium mb-6"
+          className="text-green-600 font-medium"
         >
           ← Back to My Bookings
         </Link>
 
-        {/* TITLE */}
-        <div className="bg-white rounded-xl shadow-md p-8">
+        <div className="bg-white rounded-xl shadow-md p-8 mt-6">
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
 
@@ -77,7 +77,7 @@ const BookingDetails = () => {
 
               <p className="text-gray-500 mt-2">
                 Booking ID:{" "}
-                <span className="font-semibold text-gray-700">
+                <span className="font-semibold">
                   {bookingId}
                 </span>
               </p>
@@ -86,7 +86,8 @@ const BookingDetails = () => {
 
             <span
               className={`px-4 py-2 rounded-lg font-semibold w-fit ${
-                status === "Cancelled"
+                status ===
+                "Cancelled"
                   ? "bg-red-100 text-red-600"
                   : "bg-green-100 text-green-700"
               }`}
@@ -98,7 +99,6 @@ const BookingDetails = () => {
 
         </div>
 
-        {/* BUS DETAILS */}
         <div className="bg-white rounded-xl shadow-md p-8 mt-6">
 
           <h2 className="text-2xl font-bold text-[#1e2a40] mb-6">
@@ -112,7 +112,7 @@ const BookingDetails = () => {
                 Bus Name
               </p>
 
-              <p className="font-semibold text-lg">
+              <p className="font-semibold">
                 {bus?.name}
               </p>
             </div>
@@ -149,7 +149,8 @@ const BookingDetails = () => {
               </p>
 
               <p className="font-semibold">
-                {searchData?.date || "Not available"}
+                {searchData?.date ||
+                  "Not available"}
               </p>
             </div>
 
@@ -177,7 +178,6 @@ const BookingDetails = () => {
 
         </div>
 
-        {/* PASSENGERS */}
         <div className="bg-white rounded-xl shadow-md p-8 mt-6">
 
           <h2 className="text-2xl font-bold text-[#1e2a40] mb-6">
@@ -186,70 +186,80 @@ const BookingDetails = () => {
 
           <div className="space-y-4">
 
-            {selectedSeats.map((seat) => {
+            {selectedSeats.map(
+              (seat) => {
 
-              const passenger =
-                passengers.find(
-                  (item) =>
-                    Number(item.seat) ===
-                    Number(seat)
-                );
+                const passenger =
+                  passengers.find(
+                    (item) =>
+                      Number(
+                        item.seat
+                      ) ===
+                      Number(seat)
+                  );
 
-              return (
-                <div
-                  key={seat}
-                  className="border rounded-lg p-5"
-                >
+                return (
+                  <div
+                    key={seat}
+                    className="border rounded-lg p-5"
+                  >
 
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
 
-                    <div>
+                      <div>
 
-                      <h3 className="font-bold text-lg">
-                        {passenger?.name ||
-                          "Passenger"}
-                      </h3>
+                        <h3 className="font-bold text-lg">
+                          {
+                            passenger?.name ||
+                            "Passenger"
+                          }
+                        </h3>
 
-                      <div className="text-gray-500 text-sm mt-2 space-y-1">
+                        <div className="text-gray-500 text-sm mt-2 space-y-1">
 
-                        <p>
-                          Age: {passenger?.age || "-"}
-                        </p>
+                          <p>
+                            Age:{" "}
+                            {passenger?.age ||
+                              "-"}
+                          </p>
 
-                        <p>
-                          Gender:{" "}
-                          {passenger?.gender || "-"}
-                        </p>
+                          <p>
+                            Gender:{" "}
+                            {passenger?.gender ||
+                              "-"}
+                          </p>
 
-                        <p>
-                          Phone:{" "}
-                          {passenger?.phone || "-"}
-                        </p>
+                          <p>
+                            Phone:{" "}
+                            {passenger?.phone ||
+                              "-"}
+                          </p>
 
-                        <p>
-                          Email:{" "}
-                          {passenger?.email || "-"}
-                        </p>
+                          <p>
+                            Email:{" "}
+                            {passenger?.email ||
+                              "-"}
+                          </p>
+
+                        </div>
 
                       </div>
 
+                      <span className="bg-green-100 text-green-700 px-4 py-2 rounded-lg font-semibold w-fit">
+                        Seat {seat}
+                      </span>
+
                     </div>
 
-                    <span className="bg-green-100 text-green-700 px-4 py-2 rounded-lg font-semibold w-fit">
-                      Seat {seat}
-                    </span>
-
                   </div>
-
-                </div>
-              );
-            })}
+                );
+              }
+            )}
 
           </div>
 
         </div>
 
-        {/* PAYMENT */}
         <div className="bg-white rounded-xl shadow-md p-8 mt-6">
 
           <h2 className="text-2xl font-bold text-[#1e2a40] mb-6">
@@ -302,19 +312,20 @@ const BookingDetails = () => {
 
         </div>
 
-        {/* ACTIONS */}
         <div className="flex flex-col md:flex-row gap-4 mt-6">
 
           <button
-            onClick={() => window.print()}
-            className="flex-1 border border-gray-300 bg-white py-3 rounded-lg font-semibold hover:bg-gray-50"
+            onClick={() =>
+              window.print()
+            }
+            className="flex-1 border bg-white py-3 rounded-lg font-semibold hover:bg-gray-50"
           >
             Print Booking
           </button>
 
           <Link
             to="/my-bookings"
-            className="flex-1 text-center bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold py-3"
+            className="flex-1 text-center bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold"
           >
             My Bookings
           </Link>

@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, {
+  useState,
+} from "react";
+
 import {
   Link,
   useLocation,
@@ -16,48 +19,101 @@ const Login = () => {
 
   const { login } = useAuth();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] =
+    useState("");
 
-  const [error, setError] = useState("");
+  const [password, setPassword] =
+    useState("");
+
+  const [error, setError] =
+    useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     setError("");
 
-    // Validation
     if (!email || !password) {
-      setError("Please enter email and password.");
+      setError(
+        "Please enter email and password."
+      );
+
       return;
     }
 
-    // Login
-    const result = login(email, password);
+    const result = login(
+      email,
+      password
+    );
 
     if (!result.success) {
-      setError(result.message);
+      setError(
+        result.message
+      );
+
       return;
     }
 
-    alert("Login successful!");
+    alert(
+      "Login successful!"
+    );
 
-    /*
-      Check whether the user came from
-      the booking process.
-    */
+    const bookingData =
+      location.state;
 
-    const bookingData = location.state;
-
-    if (bookingData?.from === "/seat-selection") {
-      navigate("/seat-selection", {
-        state: {
-          bus: bookingData.bus,
-          searchData: bookingData.searchData,
-        },
-      });
+    if (
+      bookingData?.from ===
+      "/seat-selection"
+    ) {
+      navigate(
+        "/seat-selection",
+        {
+          state: {
+            bus: bookingData.bus,
+            searchData:
+              bookingData.searchData,
+          },
+        }
+      );
+    } else if (
+      bookingData?.from ===
+      "/passenger-details"
+    ) {
+      navigate(
+        "/passenger-details",
+        {
+          state: {
+            bus: bookingData.bus,
+            selectedSeats:
+              bookingData.selectedSeats,
+            totalPrice:
+              bookingData.totalPrice,
+            searchData:
+              bookingData.searchData,
+          },
+        }
+      );
+    } else if (
+      bookingData?.from ===
+      "/payment"
+    ) {
+      navigate(
+        "/payment",
+        {
+          state: {
+            bus: bookingData.bus,
+            selectedSeats:
+              bookingData.selectedSeats,
+            passengers:
+              bookingData.passengers,
+            totalPrice:
+              bookingData.totalPrice,
+            searchData:
+              bookingData.searchData,
+          },
+        }
+      );
     } else {
-      // Normal login
       navigate("/");
     }
   };
@@ -70,7 +126,6 @@ const Login = () => {
 
         <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
 
-          {/* TITLE */}
           <div className="text-center mb-8">
 
             <h1 className="text-3xl font-semibold text-gray-800">
@@ -83,17 +138,16 @@ const Login = () => {
 
           </div>
 
-          {/* ERROR */}
           {error && (
             <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg mb-5">
               {error}
             </div>
           )}
 
-          {/* LOGIN FORM */}
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={handleSubmit}
+          >
 
-            {/* EMAIL */}
             <div className="mb-5">
 
               <label className="block text-gray-700 mb-2">
@@ -102,15 +156,18 @@ const Login = () => {
 
               <input
                 type="email"
-                placeholder="Enter your email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                onChange={(e) =>
+                  setEmail(
+                    e.target.value
+                  )
+                }
+                placeholder="Enter your email"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
               />
 
             </div>
 
-            {/* PASSWORD */}
             <div className="mb-6">
 
               <label className="block text-gray-700 mb-2">
@@ -119,33 +176,37 @@ const Login = () => {
 
               <input
                 type="password"
-                placeholder="Enter your password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                onChange={(e) =>
+                  setPassword(
+                    e.target.value
+                  )
+                }
+                placeholder="Enter your password"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-600"
               />
 
             </div>
 
-            {/* LOGIN BUTTON */}
             <button
               type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition"
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg"
             >
               SIGN IN
             </button>
 
           </form>
 
-          {/* SIGNUP LINK */}
           <p className="text-center text-gray-600 mt-6">
 
             Don't have an account?{" "}
 
             <Link
               to="/signup"
-              state={location.state}
-              className="text-green-600 font-semibold hover:underline"
+              state={
+                location.state
+              }
+              className="text-green-600 font-semibold"
             >
               Sign Up
             </Link>

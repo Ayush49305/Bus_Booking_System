@@ -1,10 +1,18 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, {
+  useState,
+} from "react";
+
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
+
 import PaymentMethod from "../Components/PaymentMethod";
 import PaymentSummary from "../Components/PaymentSummary";
+
 import { useAuth } from "../context/AuthContext";
 
 const Payment = () => {
@@ -21,59 +29,148 @@ const Payment = () => {
     searchData,
   } = location.state || {};
 
-  const [processing, setProcessing] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState("");
+  const [
+    processing,
+    setProcessing,
+  ] = useState(false);
 
-  const handlePayment = (paymentMethod) => {
+  const [
+    selectedPaymentMethod,
+    setSelectedPaymentMethod,
+  ] = useState("");
+
+  const handlePayment = (
+    paymentMethod
+  ) => {
     if (!user) {
-      alert("Please login before booking.");
-      navigate("/login");
+      alert(
+        "Please login before booking."
+      );
+
+      navigate("/login", {
+        state: {
+          from: "/payment",
+          bus,
+          selectedSeats,
+          passengers,
+          totalPrice,
+          searchData,
+        },
+      });
+
       return;
     }
 
-    setSelectedPaymentMethod(paymentMethod);
+    /*
+      Final seat availability check.
+      This prevents two bookings from using
+      the same seat.
+    */
+    const existingBookings =
+      JSON.parse(
+        localStorage.getItem(
+          "greenBusBookings"
+        )
+      ) || [];
+
+    const alreadyBooked =
+      existingBookings.some(
+        (booking) => {
+          if (
+            booking.status ===
+            "Cancelled"
+          ) {
+            return false;
+          }
+
+          const sameBus =
+            booking.bus?.id ===
+              bus?.id ||
+            booking.bus?.name ===
+              bus?.name;
+
+          const sameDate =
+            booking.searchData?.date ===
+            searchData?.date;
+
+          if (
+            !sameBus ||
+            !sameDate
+          ) {
+            return false;
+          }
+
+          return booking.selectedSeats?.some(
+            (seat) =>
+              selectedSeats.includes(
+                Number(seat)
+              )
+          );
+        }
+      );
+
+    if (alreadyBooked) {
+      alert(
+        "One or more selected seats have just been booked. Please select different seats."
+      );
+
+      navigate(
+        "/seat-selection",
+        {
+          state: {
+            bus,
+            searchData,
+          },
+        }
+      );
+
+      return;
+    }
+
+    setSelectedPaymentMethod(
+      paymentMethod
+    );
+
     setProcessing(true);
 
     setTimeout(() => {
       const bookingId =
-        "GB" + Date.now().toString().slice(-8);
+        "GB" +
+        Date.now()
+          .toString()
+          .slice(-8);
 
       const booking = {
         bookingId,
 
-        // Logged-in user information
         userEmail: user.email,
         userName: user.name,
 
-        // Bus information
         bus,
 
-        // Booking information
         selectedSeats,
+
         passengers,
+
         totalPrice,
+
         paymentMethod,
+
         searchData,
 
-        // Status
         status: "Confirmed",
 
-        // Date and time
         bookingDate:
-          new Date().toLocaleDateString("en-IN"),
+          new Date().toLocaleDateString(
+            "en-IN"
+          ),
 
         bookingTime:
-          new Date().toLocaleTimeString("en-IN"),
+          new Date().toLocaleTimeString(
+            "en-IN"
+          ),
       };
 
-      // Get previous bookings
-      const existingBookings =
-        JSON.parse(
-          localStorage.getItem("greenBusBookings")
-        ) || [];
-
-      // Save new booking
       localStorage.setItem(
         "greenBusBookings",
         JSON.stringify([
@@ -82,40 +179,63 @@ const Payment = () => {
         ])
       );
 
-      // Open confirmation page
-      navigate("/booking-confirmation", {
-        state: booking,
-      });
+      navigate(
+        "/booking-confirmation",
+        {
+          state: booking,
+        }
+      );
     }, 1500);
   };
 
-  // Booking data missing
-  if (!bus || selectedSeats.length === 0) {
+  if (
+    !bus ||
+    selectedSeats.length === 0
+  ) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+
         <div className="text-center bg-white p-8 rounded-xl shadow-md">
 
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="text-2xl font-bold">
             Booking information not found
           </h2>
 
           <p className="text-gray-500 mt-2">
-            Please select a bus and seats before making payment.
+            Please select a bus and seat first.
           </p>
 
           <button
-            onClick={() => navigate("/")}
-            className="mt-5 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+            onClick={() =>
+              navigate("/")
+            }
+            className="mt-5 bg-green-600 text-white px-6 py-3 rounded-lg"
           >
             Go Home
           </button>
 
         </div>
+
       </div>
     );
   }
 
-  // Payment processing
+  if (!user) {
+    navigate("/login", {
+      replace: true,
+      state: {
+        from: "/payment",
+        bus,
+        selectedSeats,
+        passengers,
+        totalPrice,
+        searchData,
+      },
+    });
+
+    return null;
+  }
+
   if (processing) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -124,8 +244,9 @@ const Payment = () => {
 
           <div className="w-14 h-14 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
 
-          <h2 className="text-2xl font-bold mt-6 text-gray-800">
-            {selectedPaymentMethod === "cash"
+          <h2 className="text-2xl font-bold mt-6">
+            {selectedPaymentMethod ===
+            "cash"
               ? "Confirming Booking..."
               : "Processing Payment..."}
           </h2>
@@ -154,15 +275,25 @@ const Payment = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
           <PaymentMethod
-            totalPrice={totalPrice}
-            onPayment={handlePayment}
+            totalPrice={
+              totalPrice
+            }
+            onPayment={
+              handlePayment
+            }
           />
 
           <PaymentSummary
             bus={bus}
-            selectedSeats={selectedSeats}
-            passengers={passengers}
-            totalPrice={totalPrice}
+            selectedSeats={
+              selectedSeats
+            }
+            passengers={
+              passengers
+            }
+            totalPrice={
+              totalPrice
+            }
           />
 
         </div>

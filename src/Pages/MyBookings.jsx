@@ -1,8 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, {
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
 
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
+
 import { useAuth } from "../context/AuthContext";
 
 const MyBookings = () => {
@@ -10,26 +18,30 @@ const MyBookings = () => {
 
   const { user } = useAuth();
 
-  const [bookings, setBookings] = useState([]);
+  const [
+    bookings,
+    setBookings,
+  ] = useState([]);
 
   const loadBookings = () => {
     const data =
       JSON.parse(
-        localStorage.getItem("greenBusBookings")
+        localStorage.getItem(
+          "greenBusBookings"
+        )
       ) || [];
 
-    // If user is not logged in
     if (!user) {
       setBookings([]);
       return;
     }
 
-    // Show only current user's bookings
-    const userBookings = data.filter(
-      (booking) =>
-        booking.userEmail?.toLowerCase() ===
-        user.email?.toLowerCase()
-    );
+    const userBookings =
+      data.filter(
+        (booking) =>
+          booking.userEmail?.toLowerCase() ===
+          user.email?.toLowerCase()
+      );
 
     setBookings(userBookings);
   };
@@ -38,10 +50,13 @@ const MyBookings = () => {
     loadBookings();
   }, [user]);
 
-  const cancelBooking = (bookingId) => {
-    const confirmCancel = window.confirm(
-      "Are you sure you want to cancel this booking?"
-    );
+  const cancelBooking = (
+    bookingId
+  ) => {
+    const confirmCancel =
+      window.confirm(
+        "Are you sure you want to cancel this booking?"
+      );
 
     if (!confirmCancel) {
       return;
@@ -49,40 +64,47 @@ const MyBookings = () => {
 
     const allBookings =
       JSON.parse(
-        localStorage.getItem("greenBusBookings")
+        localStorage.getItem(
+          "greenBusBookings"
+        )
       ) || [];
 
-    const updatedAllBookings = allBookings.map(
-      (booking) => {
-        if (booking.bookingId === bookingId) {
-          return {
-            ...booking,
-            status: "Cancelled",
-          };
+    const updatedBookings =
+      allBookings.map(
+        (booking) => {
+          if (
+            booking.bookingId ===
+            bookingId
+          ) {
+            return {
+              ...booking,
+              status: "Cancelled",
+            };
+          }
+
+          return booking;
         }
+      );
 
-        return booking;
-      }
-    );
-
-    // Update localStorage
     localStorage.setItem(
       "greenBusBookings",
-      JSON.stringify(updatedAllBookings)
+      JSON.stringify(
+        updatedBookings
+      )
     );
 
-    // Update only current user's bookings
     const updatedUserBookings =
-      updatedAllBookings.filter(
+      updatedBookings.filter(
         (booking) =>
           booking.userEmail?.toLowerCase() ===
           user?.email?.toLowerCase()
       );
 
-    setBookings(updatedUserBookings);
+    setBookings(
+      updatedUserBookings
+    );
   };
 
-  // User not logged in
   if (!user) {
     return (
       <div className="min-h-screen bg-gray-100">
@@ -107,7 +129,7 @@ const MyBookings = () => {
 
             <Link
               to="/login"
-              className="inline-block mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+              className="inline-block mt-6 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold"
             >
               Sign In
             </Link>
@@ -155,7 +177,7 @@ const MyBookings = () => {
 
             <Link
               to="/"
-              className="inline-block mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+              className="inline-block mt-6 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold"
             >
               Book a Ticket
             </Link>
@@ -166,160 +188,174 @@ const MyBookings = () => {
 
           <div className="space-y-6">
 
-            {bookings.map((booking) => (
+            {bookings.map(
+              (booking) => (
 
-              <div
-                key={booking.bookingId}
-                className="bg-white rounded-xl shadow-md p-6"
-              >
+                <div
+                  key={
+                    booking.bookingId
+                  }
+                  className="bg-white rounded-xl shadow-md p-6"
+                >
 
-                {/* HEADER */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
 
-                  <div>
+                    <div>
 
-                    <h2 className="text-xl font-bold text-[#1e2a40]">
-                      {booking.bus?.name}
-                    </h2>
+                      <h2 className="text-xl font-bold text-[#1e2a40]">
+                        {
+                          booking
+                            .bus
+                            ?.name
+                        }
+                      </h2>
 
-                    <p className="text-gray-500 mt-1">
-                      {booking.bus?.from ||
-                        booking.searchData?.from ||
-                        "Delhi"}
-                      {" → "}
-                      {booking.bus?.to ||
-                        booking.searchData?.to ||
-                        "Jaipur"}
-                    </p>
+                      <p className="text-gray-500 mt-1">
+                        {booking.bus?.from ||
+                          booking.searchData?.from ||
+                          "Delhi"}
+                        {" → "}
+                        {booking.bus?.to ||
+                          booking.searchData?.to ||
+                          "Jaipur"}
+                      </p>
 
-                  </div>
+                    </div>
 
-                  <span
-                    className={`px-4 py-2 rounded-lg font-semibold w-fit ${
-                      booking.status === "Cancelled"
-                        ? "bg-red-100 text-red-600"
-                        : "bg-green-100 text-green-700"
-                    }`}
-                  >
-                    {booking.status}
-                  </span>
-
-                </div>
-
-                {/* BOOKING INFORMATION */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-6 border-t pt-6">
-
-                  <div>
-
-                    <p className="text-sm text-gray-500">
-                      Booking ID
-                    </p>
-
-                    <p className="font-semibold">
-                      {booking.bookingId}
-                    </p>
+                    <span
+                      className={`px-4 py-2 rounded-lg font-semibold w-fit ${
+                        booking.status ===
+                        "Cancelled"
+                          ? "bg-red-100 text-red-600"
+                          : "bg-green-100 text-green-700"
+                      }`}
+                    >
+                      {
+                        booking.status
+                      }
+                    </span>
 
                   </div>
 
-                  <div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-6 border-t pt-6">
 
-                    <p className="text-sm text-gray-500">
-                      Seats
-                    </p>
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Booking ID
+                      </p>
 
-                    <p className="font-semibold">
-                      {booking.selectedSeats?.join(", ")}
-                    </p>
+                      <p className="font-semibold">
+                        {
+                          booking.bookingId
+                        }
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Seats
+                      </p>
+
+                      <p className="font-semibold">
+                        {booking.selectedSeats?.join(
+                          ", "
+                        )}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Amount
+                      </p>
+
+                      <p className="font-semibold text-green-600">
+                        ₹
+                        {
+                          booking.totalPrice
+                        }
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Payment
+                      </p>
+
+                      <p className="font-semibold capitalize">
+                        {
+                          booking.paymentMethod
+                        }
+                      </p>
+                    </div>
 
                   </div>
 
-                  <div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
 
-                    <p className="text-sm text-gray-500">
-                      Amount
-                    </p>
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Booking Date
+                      </p>
 
-                    <p className="font-semibold text-green-600">
-                      ₹{booking.totalPrice}
-                    </p>
+                      <p className="font-semibold">
+                        {
+                          booking.bookingDate
+                        }
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Booking Time
+                      </p>
+
+                      <p className="font-semibold">
+                        {
+                          booking.bookingTime
+                        }
+                      </p>
+                    </div>
 
                   </div>
 
-                  <div>
-
-                    <p className="text-sm text-gray-500">
-                      Payment
-                    </p>
-
-                    <p className="font-semibold capitalize">
-                      {booking.paymentMethod}
-                    </p>
-
-                  </div>
-
-                </div>
-
-                {/* DATE/TIME */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
-
-                  <div>
-                    <p className="text-sm text-gray-500">
-                      Booking Date
-                    </p>
-
-                    <p className="font-semibold">
-                      {booking.bookingDate}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-gray-500">
-                      Booking Time
-                    </p>
-
-                    <p className="font-semibold">
-                      {booking.bookingTime}
-                    </p>
-                  </div>
-
-                </div>
-
-                {/* BUTTONS */}
-                <div className="flex flex-col md:flex-row gap-3 mt-6">
-
-                  <button
-                    onClick={() =>
-                      navigate("/booking-details", {
-                        state: {
-                          booking,
-                        },
-                      })
-                    }
-                    className="flex-1 border border-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-50"
-                  >
-                    View Details
-                  </button>
-
-                  {booking.status !== "Cancelled" && (
+                  <div className="flex flex-col md:flex-row gap-3 mt-6">
 
                     <button
                       onClick={() =>
-                        cancelBooking(
-                          booking.bookingId
+                        navigate(
+                          "/booking-details",
+                          {
+                            state: {
+                              booking,
+                            },
+                          }
                         )
                       }
-                      className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold"
+                      className="flex-1 border border-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-50"
                     >
-                      Cancel Booking
+                      View Details
                     </button>
 
-                  )}
+                    {booking.status !==
+                      "Cancelled" && (
+                      <button
+                        onClick={() =>
+                          cancelBooking(
+                            booking.bookingId
+                          )
+                        }
+                        className="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold"
+                      >
+                        Cancel Booking
+                      </button>
+                    )}
+
+                  </div>
 
                 </div>
 
-              </div>
-
-            ))}
+              )
+            )}
 
           </div>
 
