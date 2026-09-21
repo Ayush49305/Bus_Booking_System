@@ -15,32 +15,38 @@ const SeatSelection = () => {
   const [selectedSeats, setSelectedSeats] = useState([]);
 
   const totalSeats = 40;
-
   const pricePerSeat = bus?.price || 850;
 
+  // Get already booked seats
   const bookedSeats = useMemo(() => {
     return getBookedSeats(bus, searchData);
   }, [bus, searchData]);
 
+  // Create 40 seats
   const seats = Array.from(
     { length: totalSeats },
     (_, index) => index + 1
   );
 
+  // Select / unselect seat
   const handleSeatClick = (seatNumber) => {
+    // Do nothing if seat is already booked
     if (bookedSeats.includes(seatNumber)) {
       return;
     }
 
     setSelectedSeats((previous) => {
+      // If already selected, remove it
       if (previous.includes(seatNumber)) {
         return previous.filter((seat) => seat !== seatNumber);
       }
 
+      // Otherwise select it
       return [...previous, seatNumber];
     });
   };
 
+  // Continue to passenger details
   const handleContinue = () => {
     if (selectedSeats.length === 0) {
       alert("Please select at least one seat.");
@@ -59,11 +65,12 @@ const SeatSelection = () => {
     });
   };
 
+  // If bus information is missing
   if (!bus) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-        <div className="text-center bg-white p-8 rounded-xl shadow-md">
-          <h2 className="text-2xl font-bold">
+        <div className="bg-white rounded-xl shadow-md p-8 text-center">
+          <h2 className="text-2xl font-bold text-[#1e2a40]">
             Bus information not found
           </h2>
 
@@ -81,166 +88,342 @@ const SeatSelection = () => {
   const routeFrom = bus.from || searchData.from || "Delhi";
   const routeTo = bus.to || searchData.to || "Jaipur";
 
+  // Seat Button
+  const SeatButton = ({ seatNumber }) => {
+    const isBooked = bookedSeats.includes(seatNumber);
+    const isSelected = selectedSeats.includes(seatNumber);
+
+    return (
+      <button
+        type="button"
+        disabled={isBooked}
+        onClick={() => handleSeatClick(seatNumber)}
+        className={`
+          w-[52px]
+          h-[36px]
+
+          sm:w-[64px]
+          sm:h-[42px]
+
+          rounded-md
+
+          text-xs
+          sm:text-sm
+
+          font-semibold
+
+          shadow-sm
+
+          flex
+          items-center
+          justify-center
+
+          transition-all
+          duration-200
+
+          ${
+            /* BOOKED */
+            isBooked
+              ? `
+                bg-[#f15a24]
+                border
+                border-[#f15a24]
+                text-white
+                cursor-not-allowed
+              `
+              : /* SELECTED */
+              isSelected
+              ? `
+                bg-green-600
+                border
+                border-green-600
+                text-white
+                hover:bg-green-700
+                scale-105
+              `
+              : /* AVAILABLE */
+                `
+                bg-gray-300
+                border
+                border-gray-300
+                text-gray-800
+                hover:bg-gray-400
+                hover:scale-105
+              `
+          }
+        `}
+      >
+        {String(seatNumber).padStart(2, "0")}
+      </button>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
 
-        {/* Back Button */}
+        {/* ================= BACK BUTTON ================= */}
+
         <button
           onClick={() => navigate(-1)}
-          className="text-green-600 hover:text-green-700 font-medium mb-4"
+          className="text-green-600 hover:text-green-700 font-medium mb-5"
         >
           ← Back
         </button>
 
-        {/* Page Heading */}
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#1e2a40]">
-          Select Your Seats
-        </h1>
+        {/* ================= PAGE HEADING ================= */}
 
-        <p className="text-gray-500 mt-2">
-          {bus.name}
-        </p>
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#1e2a40]">
+            Select Your Seats
+          </h1>
 
-        <p className="text-gray-500">
-          {routeFrom} → {routeTo}
-        </p>
-
-        {searchData.date && (
-          <p className="text-gray-500">
-            Journey Date: {searchData.date}
+          <p className="text-gray-500 mt-2">
+            {bus.name}
           </p>
-        )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-6 sm:mt-8">
+          <p className="text-gray-500">
+            {routeFrom} → {routeTo}
+          </p>
 
-          {/* ================= SEAT SECTION ================= */}
-          <div className="lg:col-span-2 bg-white rounded-xl shadow-md p-4 sm:p-6 md:p-8">
+          {searchData.date && (
+            <p className="text-gray-500">
+              Journey Date: {searchData.date}
+            </p>
+          )}
+        </div>
 
-            {/* Bus Header */}
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-7">
+        {/* ================= MAIN CONTENT ================= */}
 
-              <div>
-                <h2 className="text-xl font-bold">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+
+          {/* ================================================= */}
+          {/*                    SEAT SECTION                   */}
+          {/* ================================================= */}
+
+          <div className="lg:col-span-2">
+
+            <div className="bg-white rounded-xl shadow-md p-4 sm:p-6">
+
+              {/* ================= BUS HEADER ================= */}
+
+              <div className="text-center mb-6">
+
+                <h2 className="text-xl sm:text-2xl font-bold text-[#1e2a40]">
                   {bus.name}
                 </h2>
 
-                <p className="text-gray-500 text-sm mt-1">
+                <p className="text-gray-500 mt-1">
                   ₹{pricePerSeat} per seat
                 </p>
+
               </div>
 
-              {/* Driver */}
-              <div className="border border-gray-400 rounded-lg px-5 py-3 text-sm font-semibold self-start sm:self-auto">
-                DRIVER
+              {/* ================= LEGEND ================= */}
+
+              <div className="flex flex-wrap justify-center gap-6 sm:gap-10 mb-7">
+
+                {/* Available */}
+
+                <div className="flex items-center gap-2">
+                  <span className="w-7 h-7 bg-gray-300 rounded-md shadow-sm"></span>
+
+                  <span className="text-sm font-medium text-gray-700">
+                    Free
+                  </span>
+                </div>
+
+                {/* Selected */}
+
+                <div className="flex items-center gap-2">
+                  <span className="w-7 h-7 bg-green-600 rounded-md shadow-sm"></span>
+
+                  <span className="text-sm font-medium text-gray-700">
+                    Selected
+                  </span>
+                </div>
+
+                {/* Booked */}
+
+                <div className="flex items-center gap-2">
+                  <span className="w-7 h-7 bg-[#f15a24] rounded-md shadow-sm"></span>
+
+                  <span className="text-sm font-medium text-gray-700">
+                    Booked
+                  </span>
+                </div>
+
               </div>
 
-            </div>
+              {/* ================= BUS BODY ================= */}
 
-            {/* Legend */}
-            <div className="flex flex-wrap gap-x-6 gap-y-3 mb-7 text-sm">
+              <div className="border border-gray-300 rounded-lg p-4 sm:p-6">
 
-              <div className="flex items-center gap-2">
-                <span className="w-5 h-5 bg-white border-2 border-gray-300 rounded"></span>
-                <span>Available</span>
-              </div>
+                {/* ================= DRIVER ================= */}
 
-              <div className="flex items-center gap-2">
-                <span className="w-5 h-5 bg-green-600 rounded"></span>
-                <span>Selected</span>
-              </div>
+                <div className="flex justify-end mb-8">
 
-              <div className="flex items-center gap-2">
-                <span className="w-5 h-5 bg-gray-400 rounded"></span>
-                <span>Booked</span>
-              </div>
+                  <div
+                    className="
+                      w-[90px]
+                      sm:w-[105px]
 
-            </div>
+                      h-[42px]
+                      sm:h-[48px]
 
-            <div className="border-t pt-7">
+                      bg-[#d9f3b8]
 
-              {/* ================= SEAT LAYOUT ================= */}
-              <div className="flex justify-center w-full">
+                      rounded-md
 
-                <div className="grid grid-cols-4 gap-x-5 gap-y-4 sm:gap-x-7 sm:gap-y-5">
+                      shadow-md
 
-                  {seats.map((seatNumber) => {
-                    const isBooked = bookedSeats.includes(seatNumber);
-                    const isSelected = selectedSeats.includes(seatNumber);
+                      flex
+                      items-center
+                      justify-center
 
-                    return (
-                      <button
-                        key={seatNumber}
-                        type="button"
-                        disabled={isBooked}
-                        onClick={() => handleSeatClick(seatNumber)}
-                        className={`
-                          w-[62px]
-                          h-[48px]
-                          sm:w-[76px]
-                          sm:h-[52px]
-                          md:w-[88px]
-                          md:h-[55px]
-                          rounded-lg
-                          border-2
-                          font-semibold
-                          text-sm
-                          sm:text-base
-                          transition-all
-                          duration-200
-                          flex
-                          items-center
-                          justify-center
+                      text-sm
+                      sm:text-base
 
-                          ${
-                            isBooked
-                              ? "bg-gray-400 border-gray-400 text-white cursor-not-allowed"
-                              : isSelected
-                              ? "bg-green-600 border-green-600 text-white shadow-sm"
-                              : "bg-white border-gray-300 text-gray-700 hover:border-green-600 hover:text-green-600 hover:shadow-sm"
-                          }
-                        `}
-                      >
-                        {seatNumber}
-                      </button>
-                    );
-                  })}
+                      font-semibold
+
+                      text-gray-800
+                    "
+                  >
+                    Driver
+                  </div>
+
+                </div>
+
+                {/* ================= SEAT LAYOUT ================= */}
+
+                <div className="flex justify-center overflow-x-auto">
+
+                  <div
+                    className="
+                      flex
+                      items-start
+
+                      gap-10
+                      sm:gap-16
+                      md:gap-20
+                    "
+                  >
+
+                    {/* ========================================= */}
+                    {/*              LEFT TWO SEATS               */}
+                    {/* ========================================= */}
+
+                    <div
+                      className="
+                        grid
+                        grid-cols-2
+
+                        gap-x-4
+                        sm:gap-x-6
+
+                        gap-y-5
+                        sm:gap-y-6
+                      "
+                    >
+
+                      {seats
+                        .filter(
+                          (seat) =>
+                            seat % 4 === 1 ||
+                            seat % 4 === 2
+                        )
+                        .map((seatNumber) => (
+                          <SeatButton
+                            key={seatNumber}
+                            seatNumber={seatNumber}
+                          />
+                        ))}
+
+                    </div>
+
+                    {/* ========================================= */}
+                    {/*              RIGHT TWO SEATS              */}
+                    {/* ========================================= */}
+
+                    <div
+                      className="
+                        grid
+                        grid-cols-2
+
+                        gap-x-4
+                        sm:gap-x-6
+
+                        gap-y-5
+                        sm:gap-y-6
+                      "
+                    >
+
+                      {seats
+                        .filter(
+                          (seat) =>
+                            seat % 4 === 3 ||
+                            seat % 4 === 0
+                        )
+                        .map((seatNumber) => (
+                          <SeatButton
+                            key={seatNumber}
+                            seatNumber={seatNumber}
+                          />
+                        ))}
+
+                    </div>
+
+                  </div>
 
                 </div>
 
               </div>
 
+              {/* ================= BOOKED INFORMATION ================= */}
+
+              {bookedSeats.length > 0 && (
+                <div className="mt-5 text-center">
+
+                  <p className="text-sm text-gray-500">
+                    Orange seats are already booked
+                  </p>
+
+                </div>
+              )}
+
             </div>
-
-            {/* Already Booked Seats */}
-            {bookedSeats.length > 0 && (
-              <div className="mt-7 bg-gray-50 border rounded-lg p-4">
-
-                <p className="text-sm text-gray-600">
-                  <span className="font-semibold">
-                    Already booked:
-                  </span>{" "}
-                  {[...bookedSeats]
-                    .sort((a, b) => a - b)
-                    .join(", ")}
-                </p>
-
-              </div>
-            )}
 
           </div>
 
-          {/* ================= BOOKING SUMMARY ================= */}
-          <div className="bg-white rounded-xl shadow-md p-5 sm:p-6 h-fit lg:sticky lg:top-5">
+          {/* ================================================= */}
+          {/*                 BOOKING SUMMARY                   */}
+          {/* ================================================= */}
+
+          <div
+            className="
+              bg-white
+              rounded-xl
+              shadow-md
+
+              p-5
+              sm:p-6
+
+              h-fit
+
+              lg:sticky
+              lg:top-5
+            "
+          >
 
             <h2 className="text-xl font-bold text-[#1e2a40] mb-6">
               Booking Summary
             </h2>
 
-            {/* Bus */}
-            <div className="border-b pb-5">
+            {/* ================= BUS ================= */}
+
+            <div className="border-b pb-4">
 
               <p className="text-gray-500 text-sm">
                 Bus
@@ -252,8 +435,9 @@ const SeatSelection = () => {
 
             </div>
 
-            {/* Route */}
-            <div className="border-b py-5">
+            {/* ================= ROUTE ================= */}
+
+            <div className="border-b py-4">
 
               <p className="text-gray-500 text-sm">
                 Route
@@ -265,8 +449,9 @@ const SeatSelection = () => {
 
             </div>
 
-            {/* Journey Date */}
-            <div className="border-b py-5">
+            {/* ================= JOURNEY DATE ================= */}
+
+            <div className="border-b py-4">
 
               <p className="text-gray-500 text-sm">
                 Journey Date
@@ -278,24 +463,49 @@ const SeatSelection = () => {
 
             </div>
 
-            {/* Selected Seats */}
-            <div className="border-b py-5">
+            {/* ================= SELECTED SEATS ================= */}
+
+            <div className="border-b py-4">
 
               <p className="text-gray-500 text-sm">
                 Selected Seats
               </p>
 
               <p className="font-semibold mt-1">
+
                 {selectedSeats.length > 0
                   ? [...selectedSeats]
                       .sort((a, b) => a - b)
+                      .map((seat) =>
+                        String(seat).padStart(2, "0")
+                      )
                       .join(", ")
                   : "No seats selected"}
+
               </p>
 
             </div>
 
-            {/* Total */}
+            {/* ================= NUMBER OF SEATS ================= */}
+
+            <div className="border-b py-4">
+
+              <div className="flex justify-between">
+
+                <span className="text-gray-500">
+                  Number of Seats
+                </span>
+
+                <span className="font-semibold">
+                  {selectedSeats.length}
+                </span>
+
+              </div>
+
+            </div>
+
+            {/* ================= TOTAL ================= */}
+
             <div className="flex justify-between items-center pt-5">
 
               <span className="text-xl font-bold">
@@ -308,24 +518,31 @@ const SeatSelection = () => {
 
             </div>
 
-            {/* Continue */}
+            {/* ================= CONTINUE BUTTON ================= */}
+
             <button
               onClick={handleContinue}
               disabled={selectedSeats.length === 0}
               className={`
-                w-full mt-6
+                w-full
+                mt-6
                 py-3.5
-                sm:py-4
                 rounded-lg
                 font-semibold
-                text-sm
-                sm:text-base
                 transition
 
                 ${
                   selectedSeats.length === 0
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-green-600 hover:bg-green-700 text-white"
+                    ? `
+                      bg-gray-300
+                      text-gray-500
+                      cursor-not-allowed
+                    `
+                    : `
+                      bg-green-600
+                      hover:bg-green-700
+                      text-white
+                    `
                 }
               `}
             >
@@ -335,7 +552,8 @@ const SeatSelection = () => {
           </div>
 
         </div>
-      </div>
+
+      </main>
 
       <Footer />
     </div>
