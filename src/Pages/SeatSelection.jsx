@@ -99,11 +99,11 @@ const SeatSelection = () => {
         disabled={isBooked}
         onClick={() => handleSeatClick(seatNumber)}
         className={`
-          w-[52px]
-          h-[36px]
+          w-13
+          h-9
 
-          sm:w-[64px]
-          sm:h-[42px]
+          sm:w-16
+          sm:h-10.5
 
           rounded-md
 
@@ -267,11 +267,11 @@ const SeatSelection = () => {
 
                   <div
                     className="
-                      w-[90px]
-                      sm:w-[105px]
+                      w-22.5
+                      sm:w-26.25
 
-                      h-[42px]
-                      sm:h-[48px]
+                      h-10.5
+                      sm:h-12
 
                       bg-[#d9f3b8]
 
