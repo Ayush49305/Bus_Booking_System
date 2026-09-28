@@ -34,7 +34,7 @@ const SearchBox = () => {
   };
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm border border-gray-300 rounded-xl p-6 shadow-lg w-full max-w-xl">
+    <div className="bg-white/90 backdrop-blur-sm border border-gray-300 rounded-xl p-6 shadow-lg w-full max-w-lg">
       
       <form onSubmit={handleSearch}>
         
