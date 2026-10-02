@@ -13,7 +13,15 @@ const PORT = process.env.PORT || 5000;
 
 await connectDB();
 
-app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173" }));
+app.use(cors({ 
+  origin: [
+    process.env.FRONTEND_URL || "http://localhost:5173", 
+    "http://localhost:5174",
+    "http://localhost:5175"
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 
 app.get("/", (req, res) => res.json({ message: "Green Bus Bus Booking API is running" }));
@@ -22,5 +30,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/buses", busRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/contact", contactRoutes);
+
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

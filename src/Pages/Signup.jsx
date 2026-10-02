@@ -37,7 +37,7 @@ const Signup = () => {
   const [error, setError] =
     useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError("");
@@ -88,11 +88,11 @@ const Signup = () => {
       return;
     }
 
-    const result = signup(
-      name,
-      email,
-      password
-    );
+    const result = await signup(
+  name,
+  email,
+  password
+);
 
     if (!result.success) {
       setError(
