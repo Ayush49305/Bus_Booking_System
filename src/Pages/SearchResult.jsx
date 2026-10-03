@@ -1,9 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect,useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import BusCard from "../Components/BusCard";
+import API from "../api/api";
 
 const SearchResult = () => {
 
@@ -19,52 +20,51 @@ const SearchResult = () => {
   } = searchData;
 
 
-  const buses = [
-    {
-      id: 1,
-      name: "Green Express",
-      type: "AC Sleeper",
-      departure: "06:30 AM",
-      arrival: "02:30 PM",
-      price: 850,
-      from: from || "Delhi",
-      to: to || "Jaipur",
-    },
+  const [buses, setBuses] = useState([]);
 
-    {
-      id: 2,
-      name: "Green Travels",
-      type: "AC Seater",
-      departure: "09:00 AM",
-      arrival: "05:00 PM",
-      price: 700,
-      from: from || "Delhi",
-      to: to || "Jaipur",
-    },
+  const [loading, setLoading] =
+  useState(true);
 
-    {
-      id: 3,
-      name: "Green Roadways",
-      type: "Non-AC Sleeper",
-      departure: "10:30 PM",
-      arrival: "06:30 AM",
-      price: 600,
-      from: from || "Delhi",
-      to: to || "Jaipur",
-    },
+  const [error, setError] =
+  useState("");
 
-    {
-      id: 4,
-      name: "Green Premium",
-      type: "Volvo AC",
-      departure: "11:30 PM",
-      arrival: "07:00 AM",
-      price: 1200,
-      from: from || "Delhi",
-      to: to || "Jaipur",
-    },
-  ];
+  useEffect(() => {
 
+  const fetchBuses = async () => {
+
+    try {
+
+      setLoading(true);
+
+      const response =
+        await API.get("/buses", {
+          params: {
+            from,
+            to,
+          },
+        });
+
+      setBuses(response.data);
+
+    } catch (error) {
+
+      console.error(error);
+
+      setError(
+        "Unable to load buses."
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  };
+
+  fetchBuses();
+
+}, [from, to]);
 
   const [sort, setSort] = useState("default");
   const [type, setType] = useState("all");

@@ -1,86 +1,181 @@
 import express from "express";
 import Booking from "../models/Booking.js";
-import Bus from "../models/Bus.js";
-import protect from "../middleware/authMiddleware.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
-const busFields = "name type departure arrival price from to totalSeats";
 
-router.post("/", protect, async (req, res) => {
+
+// =========================
+// CREATE BOOKING
+// =========================
+
+router.post("/", authMiddleware, async (req, res) => {
   try {
-    const { busId, selectedSeats, passengers = [], totalPrice, paymentMethod, searchData = {} } = req.body;
-
-    if (!busId || !Array.isArray(selectedSeats) || selectedSeats.length === 0 || !paymentMethod) {
-      return res.status(400).json({ message: "Bus, seats and payment method are required." });
-    }
-
-    const bus = await Bus.findById(busId);
-    if (!bus) return res.status(404).json({ message: "Bus not found." });
-
-    const seats = [...new Set(selectedSeats.map(Number))];
-    if (seats.some((seat) => seat < 1 || seat > bus.totalSeats)) {
-      return res.status(400).json({ message: "Invalid seat number." });
-    }
-
-    const existing = await Booking.find({ bus: busId, "searchData.date": searchData.date, status: "Confirmed" }).select("selectedSeats");
-    const bookedSeats = existing.flatMap((booking) => booking.selectedSeats.map(Number));
-    const conflict = seats.filter((seat) => bookedSeats.includes(seat));
-
-    if (conflict.length) {
-      return res.status(409).json({ message: "One or more selected seats are already booked.", bookedSeats: conflict });
-    }
-
-    const booking = await Booking.create({
-      bookingId: `RB${Date.now().toString().slice(-8)}`,
-      user: req.user._id,
-      bus: busId,
-      selectedSeats: seats,
+    const {
+      bus,
+      selectedSeats,
       passengers,
-      totalPrice: Number(totalPrice),
+      totalPrice,
       paymentMethod,
       searchData,
-      status: "Confirmed"
+    } = req.body;
+
+    if (
+      !bus ||
+      !selectedSeats ||
+      !passengers ||
+      totalPrice === undefined ||
+      !paymentMethod
+    ) {
+      return res.status(400).json({
+        message: "Missing booking information",
+      });
+    }
+
+    const bookingId =
+      "RB" +
+      Date.now().toString().slice(-8);
+
+
+    const booking = await Booking.create({
+      user: req.user.id,
+
+      bookingId,
+
+      bus: {
+        name: bus.name,
+        type: bus.type,
+        departure: bus.departure,
+        arrival: bus.arrival,
+        price: bus.price,
+      },
+
+      searchData,
+
+      selectedSeats,
+
+      passengers,
+
+      totalPrice,
+
+      paymentMethod,
+
+      status: "Confirmed",
     });
 
-    const result = await Booking.findById(booking._id).populate("bus", busFields);
-    res.status(201).json({ message: "Booking confirmed.", booking: result });
+
+    res.status(201).json({
+      message: "Booking created successfully",
+      booking,
+    });
+
   } catch (error) {
-    res.status(500).json({ message: "Booking failed.", error: error.message });
+    console.error("Booking error:", error);
+
+    res.status(500).json({
+      message: "Failed to create booking",
+    });
   }
 });
 
-router.get("/my", protect, async (req, res) => {
+
+// =========================
+// GET MY BOOKINGS
+// =========================
+
+router.get("/my-bookings", authMiddleware, async (req, res) => {
   try {
-    const bookings = await Booking.find({ user: req.user._id }).populate("bus", busFields).sort({ createdAt: -1 });
-    res.json(bookings);
+    const bookings = await Booking.find({
+      user: req.user.id,
+    }).sort({
+      createdAt: -1,
+    });
+
+    res.json({
+      bookings,
+    });
+
   } catch (error) {
-    res.status(500).json({ message: "Could not fetch bookings.", error: error.message });
+    console.error(error);
+
+    res.status(500).json({
+      message: "Failed to fetch bookings",
+    });
   }
 });
 
-router.get("/:id", protect, async (req, res) => {
+
+// =========================
+// GET SINGLE BOOKING
+// =========================
+
+router.get("/:id", authMiddleware, async (req, res) => {
   try {
-    const booking = await Booking.findOne({ bookingId: req.params.id, user: req.user._id }).populate("bus", busFields);
-    if (!booking) return res.status(404).json({ message: "Booking not found." });
-    res.json(booking);
+    const booking = await Booking.findOne({
+      _id: req.params.id,
+      user: req.user.id,
+    });
+
+    if (!booking) {
+      return res.status(404).json({
+        message: "Booking not found",
+      });
+    }
+
+    res.json({
+      booking,
+    });
+
   } catch (error) {
-    res.status(500).json({ message: "Could not fetch booking.", error: error.message });
+    console.error(error);
+
+    res.status(500).json({
+      message: "Failed to fetch booking",
+    });
   }
 });
 
-router.patch("/:id/cancel", protect, async (req, res) => {
+
+// =========================
+// CANCEL BOOKING
+// =========================
+
+router.put("/:id/cancel", authMiddleware, async (req, res) => {
   try {
-    const booking = await Booking.findOne({ bookingId: req.params.id, user: req.user._id });
-    if (!booking) return res.status(404).json({ message: "Booking not found." });
-    if (booking.status === "Cancelled") return res.status(400).json({ message: "Booking is already cancelled." });
+    const booking = await Booking.findOne({
+      _id: req.params.id,
+      user: req.user.id,
+    });
+
+    if (!booking) {
+      return res.status(404).json({
+        message: "Booking not found",
+      });
+    }
+
+    if (booking.status === "Cancelled") {
+      return res.status(400).json({
+        message: "Booking already cancelled",
+      });
+    }
 
     booking.status = "Cancelled";
+
     await booking.save();
-    const result = await Booking.findById(booking._id).populate("bus", busFields);
-    res.json({ message: "Booking cancelled successfully.", booking: result });
+
+    res.json({
+      message: "Booking cancelled successfully",
+      booking,
+    });
+
   } catch (error) {
-    res.status(500).json({ message: "Could not cancel booking.", error: error.message });
+    console.error(error);
+
+    res.status(500).json({
+      message: "Failed to cancel booking",
+    });
   }
 });
+
 
 export default router;

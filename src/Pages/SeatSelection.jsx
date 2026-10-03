@@ -1,10 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect,useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
-
-import { getBookedSeats } from "../utils/seatAvailability";
+import API from "../api/api";
 
 const SeatSelection = () => {
   const location = useLocation();
@@ -18,9 +17,11 @@ const SeatSelection = () => {
   const pricePerSeat = bus?.price || 850;
 
   // Get already booked seats
-  const bookedSeats = useMemo(() => {
-    return getBookedSeats(bus, searchData);
-  }, [bus, searchData]);
+  const [bookedSeats, setBookedSeats] =
+  useState([]);
+
+const [loadingSeats, setLoadingSeats] =
+  useState(true);
 
   // Create 40 seats
   const seats = Array.from(
@@ -92,6 +93,50 @@ const SeatSelection = () => {
   const SeatButton = ({ seatNumber }) => {
     const isBooked = bookedSeats.includes(seatNumber);
     const isSelected = selectedSeats.includes(seatNumber);
+
+    useEffect(() => {
+
+  const fetchBookedSeats = async () => {
+
+    if (!bus?._id || !searchData?.date) {
+      setLoadingSeats(false);
+      return;
+    }
+
+    try {
+
+      const response =
+        await API.get(
+          `/buses/${bus._id}/seats`,
+          {
+            params: {
+              date: searchData.date,
+            },
+          }
+        );
+
+      setBookedSeats(
+        response.data.bookedSeats || []
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Seat availability error:",
+        error
+      );
+
+    } finally {
+
+      setLoadingSeats(false);
+
+    }
+
+  };
+
+  fetchBookedSeats();
+
+}, [bus?._id, searchData?.date]);
 
     return (
       <button

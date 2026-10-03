@@ -2,41 +2,99 @@ import mongoose from "mongoose";
 
 const passengerSchema = new mongoose.Schema(
   {
-    seat: Number,
-    name: String,
-    age: Number,
-    gender: String,
-    phone: String,
-    email: String
+    seat: {
+      type: String,
+      required: true,
+    },
+
+    name: {
+      type: String,
+      required: true,
+    },
+
+    age: {
+      type: Number,
+      required: true,
+    },
+
+    gender: {
+      type: String,
+      required: true,
+    },
+
+    phone: {
+      type: String,
+      required: true,
+    },
+
+    email: {
+      type: String,
+      required: true,
+    },
   },
-  { _id: false }
+  {
+    _id: false,
+  }
 );
 
 const bookingSchema = new mongoose.Schema(
   {
-    bookingId: { type: String, required: true, unique: true },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    bus: { type: mongoose.Schema.Types.ObjectId, ref: "Bus", required: true },
-    selectedSeats: { type: [Number], required: true },
-    passengers: { type: [passengerSchema], default: [] },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
+    bookingId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    bus: {
+      name: String,
+      type: String,
+      departure: String,
+      arrival: String,
+      price: Number,
+    },
+
     searchData: {
       from: String,
       to: String,
-      date: String
+      date: String,
     },
-    totalPrice: { type: Number, required: true },
+
+    selectedSeats: {
+      type: [String],
+      required: true,
+    },
+
+    passengers: {
+      type: [passengerSchema],
+      required: true,
+    },
+
+    totalPrice: {
+      type: Number,
+      required: true,
+    },
+
     paymentMethod: {
       type: String,
-      enum: ["upi", "card", "netbanking", "cash"],
-      required: true
+      required: true,
     },
+
     status: {
       type: String,
-      enum: ["Confirmed", "Cancelled"],
-      default: "Confirmed"
-    }
+      default: "Confirmed",
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-export default mongoose.model("Booking", bookingSchema);
+const Booking = mongoose.model("Booking", bookingSchema);
+
+export default Booking;
