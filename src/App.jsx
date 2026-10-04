@@ -16,6 +16,7 @@ import Contact from "./Pages/Contact";
 
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
+import AdminBuses from "./Pages/AdminBuses";
 
 const App = () => {
   return (
@@ -86,6 +87,11 @@ const App = () => {
       <Route
         path="/signup"
         element={<Signup />}
+      />
+
+      <Route
+        path="/admin"
+        element={<AdminBuses />}
       />
 
     </Routes>

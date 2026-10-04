@@ -20,6 +20,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
+    // "user" = normal customer, "admin" = can add/delete buses
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
   },
   {
     timestamps: true,

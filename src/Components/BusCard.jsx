@@ -44,6 +44,9 @@ const BusCard = ({ bus, searchData }) => {
           </p>
         </div>
 
+        {/* TIMES (one row on phones, normal layout on desktop) */}
+        <div className="flex items-center justify-between md:contents">
+
         {/* DEPARTURE */}
         <div className="text-center">
           <p className="font-bold text-lg">
@@ -73,6 +76,8 @@ const BusCard = ({ bus, searchData }) => {
           </p>
         </div>
 
+        </div>
+
         {/* PRICE */}
         <div className="text-center">
           <p className="text-2xl font-bold text-green-600">
@@ -87,7 +92,7 @@ const BusCard = ({ bus, searchData }) => {
         {/* BUTTON */}
         <button
           onClick={handleSelect}
-          className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+          className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
         >
           Select Seat
         </button>
